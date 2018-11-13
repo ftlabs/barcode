@@ -1,0 +1,55 @@
+function getDatetimeRange(period, frequency, offset, past = true, iso = true){
+	let currDate			= new Date().getTime();
+	let originTime			= 0;
+	let diffTime			= 0;
+	let offsetFrequency		= Number(Number(frequency) + Number(offset));
+
+	if(past === true){
+		originTime = currDate - msDuration(period, offset);
+		diffTime = currDate - msDuration(period, offsetFrequency);
+	} else {
+		originTime = currDate + msDuration(period, offset);
+		diffTime = currDate + msDuration(period, offsetFrequency);
+	}
+
+	if(iso === true){
+		return {
+			first: new Date( originTime ).toISOString().split('.')[0] + "Z",
+			next: new Date( diffTime ).toISOString().split('.')[0] + "Z",
+			list: [],
+		};
+	} else {
+		return {
+			first: new Date( originTime ),
+			next: new Date( diffTime ),
+			list: [],
+		};
+	}
+}
+
+function msDuration(period, increment){
+	let ms = 0;
+
+	switch(period){
+		case 'minutes':
+			ms = increment * (60 * 1000);
+			break;
+		case 'hours':
+			ms = increment * (60 * 60 * 1000);
+			break;
+		case 'days':
+			ms = increment * (24 * 60 * 60 * 1000);
+			break;
+	}
+	ms = Math.round(ms);
+	return ms;
+}
+
+function getDateToQueryTime(date){
+  return new Date(date).toISOString().split('.')[0] + "Z";
+}
+
+module.exports = {
+  getDatetimeRange,
+  getDateToQueryTime
+};
