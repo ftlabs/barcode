@@ -62,7 +62,7 @@ You can also optionally pass the following parameters:
 + **dateFrom** - date to start image selection from - *default 2018-11-10*
 + **dateTo** - date to end image selection on - *default 2018-11-14*
 + **orientation** - stack images horizontally or vertically - **h/v** - *default v*
-+ **fill** - gets images as masks or squashed - **fill/cover** *default true*
++ **fill** - gets images as masks or squashed - **fill/cover** - *default true*
 
 
 ### What technologies does it use?
@@ -70,7 +70,7 @@ You can also optionally pass the following parameters:
 + **[Origami image service](https://www.ft.com/__origami/service/image/v2)** : to request FT images in the correct dimensions for editing
 + **node.js** : provides the backend also requests and saves remote FT images
 + **graphicsmagick** : concatenates downloaded images into a single image
-+ **Twitter API** : for ulpading and posting the image to a Twitter account
++ **Twitter API** : for uploading and posting the image to a Twitter account
 
 
 ### How does it do it?
