@@ -95,12 +95,6 @@ router.get('/', async (req, res, next) => {
         promise
           .then(function(value) {
 
-            /*
-            let img = fs.readFileSync('./downloads/_result/output.jpg');
-            res.writeHead(200, {'Content-Type': 'image/jpg' });
-            res.end(img, 'binary');
-            */
-
             var client = new twitter({
               consumer_key: process.env.TWITTER_CONSUMER_KEY,
               consumer_secret: process.env.TWITTER_CONSUMER_SECRET,
@@ -116,18 +110,16 @@ router.get('/', async (req, res, next) => {
 
               if (!error) {
 
-                // If successful, a media object will be returned.
                 console.log(media);
 
-                // Lets tweet it
                 var status = {
                   status: 'I am a tweet',
-                  media_ids: media.media_id_string // Pass the media id string
+                  media_ids: media.media_id_string
                 }
 
                 client.post('statuses/update', status, function(error, tweet, response) {
 
-                  console.log(response);
+                  //console.log(response);
 
                   if (!error) {
                     console.log(tweet);
@@ -137,10 +129,9 @@ router.get('/', async (req, res, next) => {
               }
             });
 
-
-            res.json({status: 'complete'});
-
-
+            let img = fs.readFileSync('./downloads/_result/output.jpg');
+            res.writeHead(200, {'Content-Type': 'image/jpg' });
+            res.end(img, 'binary');
 
           })
           .catch((err) => {
