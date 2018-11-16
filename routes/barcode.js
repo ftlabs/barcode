@@ -2,6 +2,7 @@ const express = require('express');
 const download = require('image-downloader');
 const graphicsmagick = require("gm");
 const fs = require("fs");
+const twitter = require('twitter');
 const router = express.Router();
 const article = require('../modules/Article');
 
@@ -84,17 +85,63 @@ router.get('/', async (req, res, next) => {
           }
   
           renderGm.mosaic()
-            .write('./downloads/result/output.jpg', function (err) {
+            .write('./downloads/_result/output.jpg', function (err) {
                 if (err) console.log(err);
                 resolve();
             });
+
         });
         
         promise
           .then(function(value) {
-            let img = fs.readFileSync('./downloads/result/output.jpg');
+
+            /*
+            let img = fs.readFileSync('./downloads/_result/output.jpg');
             res.writeHead(200, {'Content-Type': 'image/jpg' });
             res.end(img, 'binary');
+            */
+
+            var client = new twitter({
+              consumer_key: process.env.TWITTER_CONSUMER_KEY,
+              consumer_secret: process.env.TWITTER_CONSUMER_SECRET,
+              access_token_key: process.env.TWITTER_ACCESS_TOKEN_KEY,
+              access_token_secret: process.env.TWITTER_ACCESS_TOKEN_SECRET
+            });
+
+            // Load your image
+            var data = fs.readFileSync('./downloads/_result/output.jpg');
+
+            // Make post request on media endpoint. Pass file data as media parameter
+            client.post('media/upload', {media: data}, function(error, media, response) {
+
+              if (!error) {
+
+                // If successful, a media object will be returned.
+                console.log(media);
+
+                // Lets tweet it
+                var status = {
+                  status: 'I am a tweet',
+                  media_ids: media.media_id_string // Pass the media id string
+                }
+
+                client.post('statuses/update', status, function(error, tweet, response) {
+
+                  console.log(response);
+
+                  if (!error) {
+                    console.log(tweet);
+                  }
+                });
+
+              }
+            });
+
+
+            res.json({status: 'complete'});
+
+
+
           })
           .catch((err) => {
             console.error(err);

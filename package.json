@@ -24,7 +24,6 @@
 	"dependencies": {
 		"@financial-times/s3o-middleware": "^2.0.4",
 		"assert": "^1.4.1",
-		"aws-sdk": "^2.357.0",
 		"chai": "^4.1.2",
 		"chai-http": "^3.0.0",
 		"chart.js": "^2.7.1",
@@ -43,6 +42,7 @@
 		"request": "^2.88.0",
 		"rss": "^1.2.1",
 		"striptags": "^2.1.1",
+		"twitter": "^1.7.1",
 		"uuid": "^3.0.1",
 		"xml2js": "^0.4.17"
 	},
