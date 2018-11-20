@@ -32,6 +32,7 @@
 		"express": "^4.14.0",
 		"express-handlebars": "^3.0.0",
 		"fs": "0.0.1-security",
+		"get-image-colors": "^1.8.1",
 		"gm": "^1.23.1",
 		"hbs": "^4.0.1",
 		"image-downloader": "^3.4.1",

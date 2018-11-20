@@ -22,6 +22,16 @@
     <option value="cover" selected>cover</option>
     <option value="fill">fill</option>
   </select>
+  <span>&share=</span>
+  <select id="share" name="share">
+    <option value="" selected></option>
+    <option value="twitter">twitter</option>
+  </select>
+  <span>&sort=</span>
+  <select id="sort" name="sort">
+    <option value="date" selected>date</option>
+    <option value="colour">colour</option>
+  </select>
   <br />
   <a id="queryBuilderLink" target="blank" href="">/barcode</a>
 </form>
@@ -53,10 +63,16 @@
   <li>
     <b>fit</b> type : description - <i>(cover default)</i>
   </li>
+  <li>
+    <b>share</b> type : description - <i>(undefined default)</i>
+  </li>
+  <li>
+    <b>sort</b> type : description - <i>(date default)</i>
+  </li>
 </ul>
 
   <br />
-  e.g. <a href="/barcode?width=1024&height=768&dateFrom=2018-11-13&dateTo=2018-11-14&orientation=v&fill=true">/barcode?width=1024&height=768&dateFrom=2018-11-13&dateTo=2018-11-14&orientation=v&fill=cover</a>
+  e.g. <a href="/barcode?width=1024&height=768&dateFrom=2018-11-13&dateTo=2018-11-14&orientation=v&fit=cover&sort=date">/barcode?width=1024&height=768&dateFrom=2018-11-13&dateTo=2018-11-14&orientation=v&fit=cover&sort=date</a>
 </p>
 
 <script>
@@ -67,15 +83,19 @@
   const dateTo = document.getElementById('dateTo');
   const orientation = document.getElementById('orientation');
   const fit = document.getElementById('fit');
+  const share = document.getElementById('share');
+  const sort = document.getElementById('sort');
 
   function init(){
-    if(width !== undefined && height !== undefined && dateFrom !== undefined && dateTo !== undefined && orientation !== undefined && fit !== undefined){
+    if(width !== undefined && height !== undefined && dateFrom !== undefined && dateTo !== undefined && orientation !== undefined && fit !== undefined && share !== undefined){
       width.addEventListener('change', updateUrlBuilderLink, false);
       height.addEventListener('change', updateUrlBuilderLink, false);
       dateFrom.addEventListener('change', updateUrlBuilderLink, false);
       dateTo.addEventListener('change', updateUrlBuilderLink, false);
       orientation.addEventListener('change', updateUrlBuilderLink, false);
       fit.addEventListener('change', updateUrlBuilderLink, false);
+      share.addEventListener('change', updateUrlBuilderLink, false);
+      sort.addEventListener('change', updateUrlBuilderLink, false);
       updateUrlBuilderLink();
     }
   }
@@ -87,8 +107,10 @@
     const dateToVal = dateTo.value;
     const orientationVal = orientation.options[orientation.selectedIndex].value;
     const fitVal = fit.options[fit.selectedIndex].value;
+    const shareVal = share.options[share.selectedIndex].value;
+    const sortVal = sort.options[sort.selectedIndex].value;
 
-    let str = `/barcode?width=${widthVal}&height=${heightVal}&dateFrom=${dateFromVal}&dateTo=${dateToVal}&orientation=${orientationVal}&fit=${fitVal}`;
+    let str = `/barcode?width=${widthVal}&height=${heightVal}&dateFrom=${dateFromVal}&dateTo=${dateToVal}&orientation=${orientationVal}&fit=${fitVal}&share=${shareVal}&sort=${sortVal}`;
 
     queryLink.href = str;
     queryLink.innerHTML = str;
@@ -96,7 +118,6 @@
 
   function getMultipleSelects(select){
     return select.reduce( (result, item) => {
-
       if(item.selected === true){
         result.push(item.value);
       }
