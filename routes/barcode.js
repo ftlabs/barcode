@@ -19,14 +19,15 @@ router.get('/', async (req, res, next) => {
     const images = await article.getImagesFromDateRange(dateFrom, dateTo);
     const config = createConfig(orientation, fit, images.length, width, height);
     const updatedImages = createImages(images, fit, config.width, config.height);
-    const outputPath = './downloads/_result/output.jpg';
+    const downloadPath = process.env.DOWNLOAD_PATH;
+    const outputPath = `${downloadPath}_result/output.jpg`;
     const imagePromises = [];
     
     updatedImages.forEach((image, i) => {
       const newPromise = new Promise(function(resolve, reject) {
         const options = {
           url: image,
-          dest: `./downloads/${pad((i + 1), 5, '0')}.jpg`
+          dest: `${downloadPath}${pad((i + 1), 5, '0')}.jpg`
         };
         
         download.image(options)
@@ -74,10 +75,10 @@ router.get('/', async (req, res, next) => {
 
             if(orientation === 'h'){
               renderGm.in('-page', `+0+${pos}`)
-                .in(`./downloads/${name}.jpg`);
+                .in(`${downloadPath}${name}.jpg`);
             } else {
               renderGm.in('-page', `+${pos}+0`)
-                .in(`./downloads/${name}.jpg`);
+                .in(`${downloadPath}${name}.jpg`);
             }
           }
 
