@@ -47,8 +47,8 @@ The created image is then posted to Twitter.
 ![Alt text](./docs/example_vertical.jpg?raw=true "Example Vertical Barcode image")
 *Images from 10th Nov - 14th Nov 2018 in a vertical stack*
 
-![Alt text](./docs/updated_horizontal.jpg?raw=true "Example (updated) Horizontal Barcode image")
-*Images from 19th Nov - 20th Nov 2018 in a horizontal stack*
+![Alt text](./docs/updated_horizontal.png?raw=true "Example (updated) Horizontal Barcode image")
+*[UPDATED] Images from 19th Nov - 20th Nov 2018 in a horizontal stack*
 
 
 ### How can I use it?
