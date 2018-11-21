@@ -15,9 +15,12 @@ TWITTER_CONSUMER_KEY= # you can get the twitter keys by creating a twitter app (
 TWITTER_CONSUMER_SECRET= # 
 TWITTER_ACCESS_TOKEN_KEY= # 
 TWITTER_ACCESS_TOKEN_SECRET= # 
+DOWNLOAD_PATH= # path to folder allowing image downloads
 ```
 
 Install nodemon globally by running `npm install -g nodemon`.
+
+Install GraphicsMagick through homebrew `brew install GraphicsMagick`
 
 Install the dependencies by running `npm install` and start the server with `npm start`.
 
@@ -44,6 +47,8 @@ The created image is then posted to Twitter.
 ![Alt text](./docs/example_vertical.jpg?raw=true "Example Vertical Barcode image")
 *Images from 10th Nov - 14th Nov 2018 in a vertical stack*
 
+![Alt text](./docs/updated_horizontal.jpg?raw=true "Example (updated) Horizontal Barcode image")
+*Images from 19th Nov - 20th Nov 2018 in a horizontal stack*
 
 
 ### How can I use it?
@@ -62,7 +67,7 @@ You can also optionally pass the following parameters:
 + **dateFrom** - date to start image selection from - *default 2018-11-10*
 + **dateTo** - date to end image selection on - *default 2018-11-14*
 + **orientation** - stack images horizontally or vertically - **h/v** - *default v*
-+ **fill** - gets images as masks or squashed - **fill/cover** - *default true*
++ **fit** - gets images as masks or squashed - **fill/cover** - *default true*
 
 
 ### What technologies does it use?
@@ -85,13 +90,3 @@ You can also optionally pass the following parameters:
 + The image is then uploaded as a Media item to Twitter using the Twitter API
 + The Twitter API also creates a new tweet using that media item.
 + Once this process is complete the image is returned to the users browser
-
-
-### What's next?
-
-This prototype could go on to be a scheduled service that automatically posts an image every day to a Twitter account. However it needs a plan to correctly deploy this into a live environment.
-
-Some questions to ask:
-
-+ Can the remote images be saved into memory to avoid the read/writing to file of each image?
-+ Does the final image need to be saved to S3 for image serving and cache checking?
