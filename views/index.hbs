@@ -27,11 +27,6 @@
     <option value="" selected></option>
     <option value="twitter">twitter</option>
   </select>
-  <span>&sort=</span>
-  <select id="sort" name="sort">
-    <option value="date" selected>date</option>
-    <option value="colour">colour</option>
-  </select>
   <br />
   <a id="queryBuilderLink" target="blank" href="">/barcode</a>
 </form>
@@ -66,13 +61,10 @@
   <li>
     <b>share</b> type : description - <i>(undefined default)</i>
   </li>
-  <li>
-    <b>sort</b> type : description - <i>(date default)</i>
-  </li>
 </ul>
 
   <br />
-  e.g. <a href="/barcode?width=1024&height=768&dateFrom=2018-11-13&dateTo=2018-11-14&orientation=v&fit=cover&sort=date">/barcode?width=1024&height=768&dateFrom=2018-11-13&dateTo=2018-11-14&orientation=v&fit=cover&sort=date</a>
+  e.g. <a href="/barcode?width=1024&height=768&dateFrom=2018-11-13&dateTo=2018-11-14&orientation=v&fit=cover">/barcode?width=1024&height=768&dateFrom=2018-11-13&dateTo=2018-11-14&orientation=v&fit=cover</a>
 </p>
 
 <script>
@@ -84,7 +76,6 @@
   const orientation = document.getElementById('orientation');
   const fit = document.getElementById('fit');
   const share = document.getElementById('share');
-  const sort = document.getElementById('sort');
 
   function init(){
     if(width !== undefined && height !== undefined && dateFrom !== undefined && dateTo !== undefined && orientation !== undefined && fit !== undefined && share !== undefined){
@@ -95,7 +86,6 @@
       orientation.addEventListener('change', updateUrlBuilderLink, false);
       fit.addEventListener('change', updateUrlBuilderLink, false);
       share.addEventListener('change', updateUrlBuilderLink, false);
-      sort.addEventListener('change', updateUrlBuilderLink, false);
       updateUrlBuilderLink();
     }
   }
@@ -108,9 +98,8 @@
     const orientationVal = orientation.options[orientation.selectedIndex].value;
     const fitVal = fit.options[fit.selectedIndex].value;
     const shareVal = share.options[share.selectedIndex].value;
-    const sortVal = sort.options[sort.selectedIndex].value;
 
-    let str = `/barcode?width=${widthVal}&height=${heightVal}&dateFrom=${dateFromVal}&dateTo=${dateToVal}&orientation=${orientationVal}&fit=${fitVal}&share=${shareVal}&sort=${sortVal}`;
+    let str = `/barcode?width=${widthVal}&height=${heightVal}&dateFrom=${dateFromVal}&dateTo=${dateToVal}&orientation=${orientationVal}&fit=${fitVal}&share=${shareVal}`;
 
     queryLink.href = str;
     queryLink.innerHTML = str;

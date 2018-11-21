@@ -3,7 +3,6 @@ const download = require('image-downloader');
 const graphicsmagick = require("gm");
 const fs = require("fs");
 const twitter = require('twitter');
-const getColors = require('get-image-colors');
 const router = express.Router();
 const article = require('../modules/Article');
 
@@ -15,7 +14,6 @@ router.get('/', async (req, res, next) => {
   const orientation = (req.query.orientation) ? req.query.orientation : 'h';
   const fit = (req.query.fit) ? req.query.fit : 'cover';
   const share = (req.query.share) ? req.query.share : '';
-  const sort = (req.query.sort) ? req.query.sort : 'date';
 
   try {
     const images = await article.getImagesFromDateRange(dateFrom, dateTo);
@@ -24,37 +22,40 @@ router.get('/', async (req, res, next) => {
     const outputPath = './downloads/_result/output.jpg';
     const imagePromises = [];
     
-    
     updatedImages.forEach((image, i) => {
       const newPromise = new Promise(function(resolve, reject) {
-
-        const name = pad((i + 1), 5, '0');
         const options = {
           url: image,
-          dest: `./downloads/${name}.jpg`
+          dest: `./downloads/${pad((i + 1), 5, '0')}.jpg`
         };
         
         download.image(options)
           .then(({ filename, image }) => {
-            let renderGm = graphicsmagick();
             if(orientation === 'h'){
               graphicsmagick(filename)
                 .resize(config.width, config.span, "!")
                 .write(filename, function (err) {
-                  if (err) console.log(err);
+                  if (err) {
+                    console.log(err);
+                    res.json({ error: err });
+                  }
                   resolve();
                 });
             } else {
               graphicsmagick(filename)
                 .resize(config.span, config.height, "!")
                 .write(filename, function (err) {
-                  if (err) console.log(err);
+                  if (err){
+                    console.log(err);
+                    res.json({ error: err });
+                  }
                   resolve();
                 });
             }
           })
           .catch((err) => {
-            console.error(err)
+            console.error(err);
+            res.json({ error: err });
             reject();
           });
       });
@@ -65,23 +66,6 @@ router.get('/', async (req, res, next) => {
     Promise.all(imagePromises)
       .then(function(values) {
         let promise = new Promise(function(resolve, reject) {
-
-          /*
-          let coloursList = [];
-          for(let i = 0; i < imagePromises.length; i++){
-            const name = pad((i + 1), 5, '0');
-            getColors(`./downloads/${name}.jpg`)
-              .then(colors => {
-                console.log(i);
-                coloursList.push({
-                  id: i,
-                  colour: colors.map(color => color.hex())[1]
-                });
-              });
-          }
-          console.log(coloursList);
-          */
-
           let renderGm = graphicsmagick();
 
           for(let i = 0; i < imagePromises.length; i++){
@@ -113,14 +97,13 @@ router.get('/', async (req, res, next) => {
             let img = fs.readFileSync(outputPath);
             res.writeHead(200, {'Content-Type': 'image/jpg' });
             res.end(img, 'binary');
-
           })
           .catch((err) => {
             console.error(err);
           });
       })
       .catch((err) => {
-        console.error(err)
+        console.error(err);
       });
 	} catch (err) {
 		next(err);
@@ -157,7 +140,7 @@ function createImages(images, fit, width, height){
   if(fit === 'fill'){
     return images.map(url => {
       const parts = url.split('?');
-      return parts[0].concat(`?source=ftlabs-barcode&width=1&height=1&quality=highest&fit=${fit}`);
+      return parts[0].concat(`?source=ftlabs-barcode&width=10&height=10&quality=highest&fit=${fit}`);
     });
   }
   
@@ -168,18 +151,18 @@ function createImages(images, fit, width, height){
 }
 
 function postTwitter(message, mediaPath){
-  var client = new twitter({
+  let client = new twitter({
     consumer_key: process.env.TWITTER_CONSUMER_KEY,
     consumer_secret: process.env.TWITTER_CONSUMER_SECRET,
     access_token_key: process.env.TWITTER_ACCESS_TOKEN_KEY,
     access_token_secret: process.env.TWITTER_ACCESS_TOKEN_SECRET
   });
 
-  var data = fs.readFileSync(mediaPath);
+  let data = fs.readFileSync(mediaPath);
 
   client.post('media/upload', {media: data}, function(error, media, response) {
     if (!error) {
-      var status = {
+      let status = {
         status: message,
         media_ids: media.media_id_string
       }
