@@ -54,7 +54,7 @@ function postTwitter(message, mediaPath){
     access_token_secret: process.env.TWITTER_ACCESS_TOKEN_SECRET
   });
 
-  let data = filesystem.readFileSync(mediaPath);
+  const data = filesystem.readFileSync(mediaPath);
 
   client.post('media/upload', {media: data}, function(error, media, response) {
     if (!error) {
