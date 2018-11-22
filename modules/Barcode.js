@@ -47,7 +47,7 @@ function createImagePaths(config, images){
 }
 
 function postTwitter(message, mediaPath){
-  let client = new twitter({
+  const client = new twitter({
     consumer_key: process.env.TWITTER_CONSUMER_KEY,
     consumer_secret: process.env.TWITTER_CONSUMER_SECRET,
     access_token_key: process.env.TWITTER_ACCESS_TOKEN_KEY,
@@ -58,7 +58,7 @@ function postTwitter(message, mediaPath){
 
   client.post('media/upload', {media: data}, function(error, media, response) {
     if (!error) {
-      let status = {
+      const status = {
         status: message,
         media_ids: media.media_id_string
       }
@@ -117,7 +117,7 @@ function getDownloadPromise(config, image, i) {
 
 function createStitchedImage(config, imagePromises){
   return new Promise(function(resolve, reject) {
-    let renderGm = graphicsmagick();
+    const renderGm = graphicsmagick();
 
     for(let i = 0; i < imagePromises.length; i++){
       const name = pad((i + 1), 5, '0');

@@ -1,4 +1,5 @@
 const express = require('express');
+const path = require('path');
 const fs = require("fs");
 const router = express.Router();
 const article = require('../modules/Article');
@@ -24,6 +25,10 @@ router.get('/', async (req, res, next) => {
       res.json({ error: "Download folders not found" });
     }
 
+    if(path.isAbsolute(paths.downloads) || path.isAbsolute(paths.result)) {
+      res.json({ error: "Download folders need to be relative paths" });
+    }
+
     const images = await article.getImagesFromDateRange(dateFrom, dateTo);
     const config = barcode.createConfig(orientation, fit, images.length, width, height, paths);
     const updatedImages = barcode.createImagePaths(config, images);
@@ -35,7 +40,7 @@ router.get('/', async (req, res, next) => {
         finalImage
           .then(() => shareCheck(share, config.paths.output))
           .then(() => {
-            let img = fs.readFileSync(config.paths.output);
+            const img = fs.readFileSync(config.paths.output);
             res.writeHead(200, {'Content-Type': 'image/jpg' });
             res.end(img, 'binary');
           })
