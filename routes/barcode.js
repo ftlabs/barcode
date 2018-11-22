@@ -14,26 +14,28 @@ router.get('/', async (req, res, next) => {
   const share = (req.query.share) ? req.query.share : '';
 
   try {
-    const downloadPath = `${process.env.DOWNLOAD_FOLDER}`;
-    const resultPath = `${process.env.RESULT_FOLDER}`;
-    const outputPath = `${resultPath}/output.jpg`;
+    const paths = {
+      downloads: `${process.env.DOWNLOAD_FOLDER}`,
+      result: `${process.env.RESULT_FOLDER}`,
+      output: `${process.env.RESULT_FOLDER}/output.jpg`
+    };
     
-    if (!fs.existsSync(downloadPath) || !fs.existsSync(resultPath)) {
+    if (!fs.existsSync(paths.downloads) || !fs.existsSync(paths.result)) {
       res.json({ error: "Download folders not found" });
     }
 
     const images = await article.getImagesFromDateRange(dateFrom, dateTo);
-    const config = barcode.createConfig(orientation, fit, images.length, width, height);
-    const updatedImages = barcode.createImagePaths(images, fit, config.width, config.height);
-    const imagePromises = barcode.getImages(config, updatedImages, orientation, downloadPath);
+    const config = barcode.createConfig(orientation, fit, images.length, width, height, paths);
+    const updatedImages = barcode.createImagePaths(config, images);
+    const imagePromises = barcode.getImages(config, updatedImages);
 
     Promise.all(imagePromises)
       .then(function(values) {
-        const finalImage = barcode.createStitchedImage(config, imagePromises, downloadPath, orientation, outputPath);
+        const finalImage = barcode.createStitchedImage(config, imagePromises);
         finalImage
-          .then(() => shareCheck(share, outputPath))
+          .then(() => shareCheck(share, config.paths.output))
           .then(() => {
-            let img = fs.readFileSync(outputPath);
+            let img = fs.readFileSync(config.paths.output);
             res.writeHead(200, {'Content-Type': 'image/jpg' });
             res.end(img, 'binary');
           })
@@ -50,9 +52,9 @@ router.get('/', async (req, res, next) => {
 	}
 });
 
-function shareCheck(share, outputPath){
+function shareCheck(share, imagePath){
   if(share === 'twitter'){
-    barcode.postTwitter('I am a tweet', outputPath);
+    barcode.postTwitter('I am a tweet', imagePath);
   }
 }
 

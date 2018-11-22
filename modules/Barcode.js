@@ -4,12 +4,14 @@ const filesystem = require("fs");
 const path = require('path');
 const twitter = require('twitter');
 
-function createConfig(orientation, fit, num, width, height){
+function createConfig(orientation, fit, num, width, height, paths){
   const config = {
+    orientation : orientation,
     width: width,
     height: height,
     span: 0,
-    fit: fit
+    fit: fit,
+    paths: paths
   };
 
   if(fit === 'fill'){
@@ -30,17 +32,17 @@ function createConfig(orientation, fit, num, width, height){
   return config;
 }
 
-function createImagePaths(images, fit, width, height){
-  if(fit === 'fill'){
+function createImagePaths(config, images){
+  if(config.fit === 'fill'){
     return images.map(url => {
       const parts = url.split('?');
-      return parts[0].concat(`?source=ftlabs-barcode&width=10&height=10&quality=highest&fit=${fit}`);
+      return parts[0].concat(`?source=ftlabs-barcode&width=10&height=10&quality=highest&fit=${config.fit}`);
     });
   }
   
   return images.map(url => {
     const parts = url.split('?');
-    return parts[0].concat(`?source=ftlabs-barcode&width=${width}&height=${height}&quality=highest&fit=${fit}`);
+    return parts[0].concat(`?source=ftlabs-barcode&width=${config.width}&height=${config.height}&quality=highest&fit=${config.fit}`);
   });
 }
 
@@ -69,25 +71,25 @@ function postTwitter(message, mediaPath){
   });
 }
 
-function getImages(config, images, orientation, downloadPath) {
+function getImages(config, images) {
   const promiseList = [];
   images.forEach((image, i) => {
-    promiseList.push(getDownloadPromise(config, image, i, orientation, downloadPath));
+    promiseList.push(getDownloadPromise(config, image, i, config.orientation, config.paths.downloads));
   });
   return promiseList;
 }
 
-function getDownloadPromise(config, image, i, orientation, downloadPath) {
+function getDownloadPromise(config, image, i) {
   return newPromise = new Promise(function(resolve, reject) {
     const options = {
       url: image,
-      dest: `${downloadPath}/${pad((i + 1), 5, '0')}.jpg`
+      dest: `${config.paths.downloads}/${pad((i + 1), 5, '0')}.jpg`
     };
 
     download.image(options)
       .then(({ filename }) => {
 
-        if(orientation === 'h'){
+        if(config.orientation === 'h'){
           graphicsmagick(filename)
             .resize(config.width, config.span, "!")
             .write(filename, function (err) {
@@ -113,7 +115,7 @@ function getDownloadPromise(config, image, i, orientation, downloadPath) {
   });
 }
 
-function createStitchedImage(config, imagePromises, downloadPath, orientation, outputPath){
+function createStitchedImage(config, imagePromises){
   return new Promise(function(resolve, reject) {
     let renderGm = graphicsmagick();
 
@@ -121,17 +123,17 @@ function createStitchedImage(config, imagePromises, downloadPath, orientation, o
       const name = pad((i + 1), 5, '0');
       const pos = (i * config.span);
 
-      if(orientation === 'h'){
+      if(config.orientation === 'h'){
         renderGm.in('-page', `+0+${pos}`)
-          .in(`${downloadPath}/${name}.jpg`);
+          .in(`${config.paths.downloads}/${name}.jpg`);
       } else {
         renderGm.in('-page', `+${pos}+0`)
-          .in(`${downloadPath}/${name}.jpg`);
+          .in(`${config.paths.downloads}/${name}.jpg`);
       }
     }
 
     renderGm.mosaic()
-      .write(outputPath, function (err) {
+      .write(config.paths.output, function (err) {
           if (err){
             throw err;
           };
@@ -153,6 +155,5 @@ module.exports = {
   postTwitter,
   getImages,
   getDownloadPromise,
-  createStitchedImage,
-  pad
+  createStitchedImage
 };
