@@ -1,7 +1,6 @@
 const download = require('image-downloader');
 const graphicsmagick = require("gm");
 const filesystem = require("fs");
-const path = require('path');
 const twitter = require('twitter');
 
 function createConfig(orientation, fit, num, width, height, paths){
