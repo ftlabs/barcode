@@ -11,7 +11,7 @@ router.get('/', async (req, res, next) => {
   const dateFrom = (req.query.dateFrom) ? req.query.dateFrom : '2018-11-15';
   const dateTo = (req.query.dateTo) ? req.query.dateTo : '2018-11-16';
   const orientation = (req.query.orientation) ? req.query.orientation : 'h';
-  const fit = (req.query.fit) ? req.query.fit : 'cover';
+  const fit = (req.query.fit) ? req.query.fit : 'fill';
   const share = (req.query.share) ? req.query.share : '';
 
   const validation = barcode.validateVars([
