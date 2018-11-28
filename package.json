@@ -1,7 +1,7 @@
 {
-	"name": "base-api-project",
+	"name": "ft-barcode",
 	"version": "1.0.0",
-	"description": "Base project used for quick setup with FT Api's",
+	"description": "Creates a combined image from squashed slices of a series of images",
 	"main": "index.js",
 	"scripts": {
 		"start": "node index.js",
