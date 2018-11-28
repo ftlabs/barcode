@@ -1,6 +1,6 @@
 const express = require('express');
 const path = require('path');
-const fs = require("fs");
+const fs = require('fs');
 const router = express.Router();
 const article = require('../modules/Article');
 const barcode = require('../modules/Barcode');
@@ -14,6 +14,21 @@ router.get('/', async (req, res, next) => {
   const fit = (req.query.fit) ? req.query.fit : 'cover';
   const share = (req.query.share) ? req.query.share : '';
 
+  const validation = barcode.validateVars([
+    {name: 'Width', value: width, type: 'dimensions'},
+    {name: 'Height', value: height, type: 'dimensions'},
+    {name: 'DateFrom', value: dateFrom, type: 'date'},
+    {name: 'DateTo', value: dateTo, type: 'date'},
+    {name: 'Orientation', value: orientation, type: 'alpha', selection: ['v', 'h']},
+    {name: 'Fit', value: fit, type: 'alpha', selection: ['cover', 'fill']},
+    {name: 'Share', value: share, type: '', selection: ['', 'twitter']},
+    {name: ['dateFrom', 'dateTo'], value: [dateFrom, dateTo], type: 'lessThan'},
+  ]);
+  if(validation.length != 0){
+    res.json({ errors: validation });
+    return;
+  }
+
   try {
     const paths = {
       downloads: `${process.env.DOWNLOAD_FOLDER}`,
@@ -22,11 +37,11 @@ router.get('/', async (req, res, next) => {
     };
     
     if (!fs.existsSync(paths.downloads) || !fs.existsSync(paths.result)) {
-      res.json({ error: "Download folders not found" });
+      res.json({ error: "Download folders not found" }); return;
     }
 
     if(path.isAbsolute(paths.downloads) || path.isAbsolute(paths.result)) {
-      res.json({ error: "Download folders need to be relative paths" });
+      res.json({ error: "Download folders need to be relative paths" }); return;
     }
 
     const images = await article.getImagesFromDateRange(dateFrom, dateTo);
@@ -43,23 +58,24 @@ router.get('/', async (req, res, next) => {
             const img = fs.readFileSync(config.paths.output);
             res.writeHead(200, {'Content-Type': 'image/jpg' });
             res.end(img, 'binary');
+            return;
           })
           .catch((err) => {
-            res.json({ error: `finalImage: ${err}` });
+            res.json({ error: `finalImage: ${err}` }); return;
           });
       })
       .catch((err) => {
-        res.json({ error: `imagePromises: ${err}` });
+        res.json({ error: `imagePromises: ${err}` }); return;
       });
 	} catch (err) {
     next(err);
-    res.json({ error: `router: ${err}` });
+    res.json({ error: `router: ${err}` }); return;
 	}
 });
 
 function shareCheck(share, imagePath){
   if(share === 'twitter'){
-    barcode.postTwitter('I am a tweet', imagePath);
+    barcode.postTwitter('I am a test tweet', imagePath);
   }
 }
 
