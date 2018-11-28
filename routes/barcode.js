@@ -18,11 +18,13 @@ router.get('/', async (req, res, next) => {
     {name: 'Width', value: width, type: 'dimensions'},
     {name: 'Height', value: height, type: 'dimensions'},
     {name: 'DateFrom', value: dateFrom, type: 'date'},
+    {name: 'DateFrom', value: dateFrom, type: 'datePast'},
     {name: 'DateTo', value: dateTo, type: 'date'},
+    {name: 'DateTo', value: dateTo, type: 'datePast'},
+    {name: ['dateFrom', 'dateTo'], value: [dateFrom, dateTo], type: 'lessThan'},
     {name: 'Orientation', value: orientation, type: 'alpha', selection: ['v', 'h']},
     {name: 'Fit', value: fit, type: 'alpha', selection: ['cover', 'fill']},
     {name: 'Share', value: share, type: '', selection: ['', 'twitter']},
-    {name: ['dateFrom', 'dateTo'], value: [dateFrom, dateTo], type: 'lessThan'},
   ]);
   if(validation.length != 0){
     res.json({ errors: validation });

@@ -24,6 +24,11 @@ function validateVars(input){
           errors.push(`${item.name} needs to be a date value in the yyyy-mm-dd format`);
         }
         break;
+      case 'datePast':
+        if(item.value > getCurrentDate()){
+          errors.push(`${item.name} must be in the past`);
+        }
+        break;
       case 'greaterThan':
         if(item.value[0] < item.value[1]) {
           errors.push(`${item.name[0]} needs to be greater than ${item.name[1]}`);
@@ -40,6 +45,16 @@ function validateVars(input){
     }
   });
   return errors;
+}
+
+function getCurrentDate(){
+    var x = new Date();
+    var y = x.getFullYear().toString();
+    var m = (x.getMonth() + 1).toString();
+    var d = x.getDate().toString();
+    (d.length == 1) && (d = '0' + d);
+    (m.length == 1) && (m = '0' + m);
+    return `${y}-${m}-${d}`;
 }
 
 function createConfig(orientation, fit, num, width, height, paths){
