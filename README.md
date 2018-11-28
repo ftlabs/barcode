@@ -18,6 +18,7 @@ TWITTER_CONSUMER_SECRET= #
 TWITTER_ACCESS_TOKEN_KEY= # 
 TWITTER_ACCESS_TOKEN_SECRET= # 
 DOWNLOAD_PATH= # path to folder allowing image downloads
+RESULT_FOLDER= # path to folder for final combined image storage
 ```
 
 Install nodemon globally by running `npm install -g nodemon`.
