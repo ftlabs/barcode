@@ -25,6 +25,13 @@ Install GraphicsMagick through homebrew `brew install GraphicsMagick`
 Install the dependencies by running `npm install` and start the server with `npm start`.
 
 
+### Heroku
+
+Install GraphicsMagick by adding it as a build pack:
+https://github.com/mcollina/heroku-buildpack-graphicsmagick.git
+
+
+
 ## Tests
 
 ```sh
