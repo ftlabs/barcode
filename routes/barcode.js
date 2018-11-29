@@ -2,6 +2,7 @@ const express = require('express');
 const path = require('path');
 const fs = require('fs');
 const router = express.Router();
+const valid = require('../helpers/validation');
 const article = require('../modules/Article');
 const barcode = require('../modules/Barcode');
 
@@ -14,7 +15,7 @@ router.get('/', async (req, res, next) => {
   const fit = (req.query.fit) ? req.query.fit : 'fill';
   const share = (req.query.share) ? req.query.share : '';
 
-  const validation = barcode.validateVars([
+  const validation = valid.validateVars([
     {name: 'Width', value: width, type: 'dimensions'},
     {name: 'Height', value: height, type: 'dimensions'},
     {name: 'DateFrom', value: dateFrom, type: 'date'},
@@ -23,6 +24,7 @@ router.get('/', async (req, res, next) => {
     {name: 'DateTo', value: dateTo, type: 'datePast'},
     {name: ['dateFrom', 'dateTo'], value: [dateFrom, dateTo], type: 'lessThan'},
     {name: ['dateFrom', 'dateTo'], value: [dateFrom, dateTo], type: 'notMatching'},
+    {name: ['dateFrom', 'dateTo'], value: [dateFrom, dateTo], type: 'dateRangeLimit', limit: 5},
     {name: 'Orientation', value: orientation, type: 'alpha', selection: ['v', 'h']},
     {name: 'Fit', value: fit, type: 'alpha', selection: ['cover', 'fill']},
     {name: 'Share', value: share, type: '', selection: ['', 'twitter']},
