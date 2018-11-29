@@ -30,8 +30,7 @@ router.get('/', async (req, res, next) => {
     {name: 'Share', value: share, type: '', selection: ['', 'twitter']},
   ]);
   if(validation.length != 0){
-    res.json({ errors: validation });
-    return;
+    return res.json({ errors: validation });
   }
 
   try {
@@ -42,17 +41,17 @@ router.get('/', async (req, res, next) => {
     };
     
     if (!fs.existsSync(paths.downloads) || !fs.existsSync(paths.result)) {
-      res.json({ error: "Download folders not found" }); return;
+      return res.json({ error: "Download folders not found" });
     }
 
     if(path.isAbsolute(paths.downloads) || path.isAbsolute(paths.result)) {
-      res.json({ error: "Download folders need to be relative paths" }); return;
+      return res.json({ error: "Download folders need to be relative paths" });
     }
 
     const images = await article.getImagesFromDateRange(dateFrom, dateTo);
 
     if(images.length <= 0){
-      res.json({ error: `No images found with the search parameters, please adjust your date range and try again` }); return;
+      return res.json({ error: `No images found with the search parameters, please adjust your date range and try again` });
     }
 
     const config = barcode.createConfig(orientation, fit, images.length, width, height, paths);
@@ -71,15 +70,15 @@ router.get('/', async (req, res, next) => {
             return;
           })
           .catch((err) => {
-            res.json({ error: `finalImage: ${err}` }); return;
+            return res.json({ error: `finalImage: ${err}` });
           });
       })
       .catch((err) => {
-        res.json({ error: `imagePromises: ${err}` }); return;
+        return res.json({ error: `imagePromises: ${err}` });
       });
 	} catch (err) {
     next(err);
-    res.json({ error: `router: ${err}` }); return;
+    return res.json({ error: `router: ${err}` });
 	}
 });
 
