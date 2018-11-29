@@ -9,7 +9,6 @@ function createHash(...vars){
 }
 
 function createConfig(orientation, fit, num, width, height, paths){
-  console.log('createConfig');
   const config = {
     orientation : orientation,
     width: width,
@@ -38,7 +37,6 @@ function createConfig(orientation, fit, num, width, height, paths){
 }
 
 function createImagePaths(config, images){
-  console.log('createImagePaths');
   if(config.fit === 'fill'){
     return images.map(url => {
       const parts = url.split('?');
@@ -79,16 +77,14 @@ function postTwitter(message, mediaPath){
 
 function getImages(config, images) {
   const promiseList = [];
-  console.log('getImages');
   images.forEach((image, i) => {
     promiseList.push(getDownloadPromise(config, image, i, config.orientation, config.paths.downloads));
   });
-  console.log('getImages: out');
   return promiseList;
 }
 
 function getDownloadPromise(config, image, i) {
-  return new Promise(function(resolve, reject) {
+  const downloadPromise = new Promise(function(resolve, reject) {
     const options = {
       url: image,
       dest: `${config.paths.downloads}/${pad((i + 1), 5, '0')}.jpg`
@@ -101,46 +97,54 @@ function getDownloadPromise(config, image, i) {
             .resize(config.width, config.span, "!")
             .write(filename, function (err) {
               if (err) {
-                console.log('download if' + err)
                 throw err;
               }
-              resolve();
+              resolve('complete');
             });
         } else {
           graphicsmagick(filename)
             .resize(config.span, config.height, "!")
             .write(filename, function (err) {
               if (err){
-                console.log('download else' + err)
                 throw err;
               }
-              resolve();
+              resolve('complete');
             });
         }
       })
       .catch((err) => {
-        throw err;
+        reject(err);
       });
+  })
+  .catch(function(err){
+    console.error('err', err);
   });
+
+  return downloadPromise;
 }
 
-function createStitchedImage(config, imagePromises){
-  console.log('createStitchedImage');
+function createStitchedImage(config, imagePromises, values){
   return new Promise(function(resolve) {
     const renderGm = graphicsmagick();
 
-    for(let i = 0; i < imagePromises.length; i++){
-      const name = pad((i + 1), 5, '0');
-      const pos = (i * config.span);
+    let i = 0;
+    let tracker = 0;
+    imagePromises.forEach(image => {
+      if(values[tracker] !== undefined){
+        const name = pad((i + 1), 5, '0');
+        const pos = (i * config.span);
 
-      if(config.orientation === 'h'){
-        renderGm.in('-page', `+0+${pos}`)
-          .in(`${config.paths.downloads}/${name}.jpg`);
-      } else {
-        renderGm.in('-page', `+${pos}+0`)
-          .in(`${config.paths.downloads}/${name}.jpg`);
+        if(config.orientation === 'h'){
+          renderGm.in('-page', `+0+${pos}`)
+            .in(`${config.paths.downloads}/${name}.jpg`);
+        } else {
+          renderGm.in('-page', `+${pos}+0`)
+            .in(`${config.paths.downloads}/${name}.jpg`);
+        }
+        i++;
       }
-    }
+      tracker++;
+    });
 
     renderGm.mosaic()
       .write(config.paths.output, function (err) {

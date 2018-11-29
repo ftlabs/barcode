@@ -66,21 +66,13 @@ router.get('/', async (req, res, next) => {
 
     const config = barcode.createConfig(orientation, fit, images.length, width, height, paths);
     const updatedImages = barcode.createImagePaths(config, images);
-
-    console.log(updatedImages);
-
     const imagePromises = barcode.getImages(config, updatedImages);
-
-    console.log('marker 1');
 
     Promise.all(imagePromises)
       .then(function(values) {
-        console.log('marker 2');
-        console.log('imagePromises');
-        const finalImage = barcode.createStitchedImage(config, imagePromises)
+        barcode.createStitchedImage(config, imagePromises, values)
           .then(() => shareCheck(share, config.paths.output))
           .then(() => {
-            console.log('final');
             res.writeHead(200, {'Content-Type': 'image/jpg' });
             res.end(fs.readFileSync(config.paths.output), 'binary');
             removeHashFolderAndContents(hash, process.env.DOWNLOAD_FOLDER);
@@ -91,7 +83,10 @@ router.get('/', async (req, res, next) => {
           });
       })
       .catch((err) => {
-        return res.json({ error: `imagePromises: ${err}` });
+        return res.json({
+          error: 'Issue downloading all images',
+          message: `${err}`
+        });
       });
 	} catch (err) {
     return res.json({ error: `router: ${err}` });
