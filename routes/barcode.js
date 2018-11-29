@@ -75,9 +75,9 @@ router.get('/', async (req, res, next) => {
         finalImage
           .then(() => shareCheck(share, config.paths.output))
           .then(() => {
-            removeHashFolderAndContents(hash, process.env.DOWNLOAD_FOLDER);
             res.writeHead(200, {'Content-Type': 'image/jpg' });
             res.end(fs.readFileSync(config.paths.output), 'binary');
+            removeHashFolderAndContents(hash, process.env.DOWNLOAD_FOLDER);
             return;
           })
           .catch((err) => {
