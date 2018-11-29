@@ -2,6 +2,8 @@
 
 An API endpoint to gather all of the main images used in FT articles from a provided date range, the last 24 hours for example, and squash them (width wise) to give one condensed image that represents the news. The final result looks similar to a coloured barcode.
 
+Can be tested out here:
+[https://ft-barcode.herokuapp.com/](https://ft-barcode.herokuapp.com/)
 
 ## Installation
 
@@ -16,6 +18,7 @@ TWITTER_CONSUMER_SECRET= #
 TWITTER_ACCESS_TOKEN_KEY= # 
 TWITTER_ACCESS_TOKEN_SECRET= # 
 DOWNLOAD_PATH= # path to folder allowing image downloads
+RESULT_FOLDER= # path to folder for final combined image storage
 ```
 
 Install nodemon globally by running `npm install -g nodemon`.
@@ -23,6 +26,15 @@ Install nodemon globally by running `npm install -g nodemon`.
 Install GraphicsMagick through homebrew `brew install GraphicsMagick`
 
 Install the dependencies by running `npm install` and start the server with `npm start`.
+
+
+### Heroku deployment
+
+To get GraphicsMagick working on Heroku you need to add some buildpacks, make sure they are in this order:
+
++ https://github.com/heroku/heroku-buildpack-apt
++ https://github.com/bogini/heroku-buildpack-graphicsmagick
++ heroku/nodejs
 
 
 ## Tests
@@ -64,10 +76,11 @@ You can also optionally pass the following parameters:
 
 + **width** - width of returned image - *default 1024* 
 + **height** - height of returned image - *default 768*
-+ **dateFrom** - date to start image selection from - *default 2018-11-10*
-+ **dateTo** - date to end image selection on - *default 2018-11-14*
-+ **orientation** - stack images horizontally or vertically - **h/v** - *default v*
-+ **fit** - gets images as masks or squashed - **fill/cover** - *default true*
++ **dateFrom** - date to start image selection from - *default 2018-11-15*
++ **dateTo** - date to end image selection on - *default 2018-11-16*
++ **orientation** - stack images horizontally or vertically - **h/v** - *default h*
++ **fit** - gets images as masks or squashed - **fill/cover** - *default fill*
++ **share** - option to share to social media [optional] - **twitter** - *default undefined*
 
 
 ### What technologies does it use?
@@ -87,6 +100,5 @@ You can also optionally pass the following parameters:
 + Each image is then downloaded to a local folder
 + GraphicsMagick then creates a new image by stitching together the downloaded images (in original published order)
 + The new image is then saved to a local folder
-+ The image is then uploaded as a Media item to Twitter using the Twitter API
-+ The Twitter API also creates a new tweet using that media item.
++ **[If twitter share was requested]** The image is then uploaded as a Media item to Twitter using the Twitter API. The Twitter API also creates a new tweet using that media item.
 + Once this process is complete the image is returned to the users browser

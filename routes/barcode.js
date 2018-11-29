@@ -1,7 +1,8 @@
 const express = require('express');
 const path = require('path');
-const fs = require("fs");
+const fs = require('fs');
 const router = express.Router();
+const valid = require('../helpers/validation');
 const article = require('../modules/Article');
 const barcode = require('../modules/Barcode');
 
@@ -11,8 +12,26 @@ router.get('/', async (req, res, next) => {
   const dateFrom = (req.query.dateFrom) ? req.query.dateFrom : '2018-11-15';
   const dateTo = (req.query.dateTo) ? req.query.dateTo : '2018-11-16';
   const orientation = (req.query.orientation) ? req.query.orientation : 'h';
-  const fit = (req.query.fit) ? req.query.fit : 'cover';
+  const fit = (req.query.fit) ? req.query.fit : 'fill';
   const share = (req.query.share) ? req.query.share : '';
+
+  const validation = valid.validateVars([
+    {name: 'Width', value: width, type: 'dimensions'},
+    {name: 'Height', value: height, type: 'dimensions'},
+    {name: 'DateFrom', value: dateFrom, type: 'date'},
+    {name: 'DateFrom', value: dateFrom, type: 'datePast'},
+    {name: 'DateTo', value: dateTo, type: 'date'},
+    {name: 'DateTo', value: dateTo, type: 'datePast'},
+    {name: ['dateFrom', 'dateTo'], value: [dateFrom, dateTo], type: 'lessThan'},
+    {name: ['dateFrom', 'dateTo'], value: [dateFrom, dateTo], type: 'notMatching'},
+    {name: ['dateFrom', 'dateTo'], value: [dateFrom, dateTo], type: 'dateRangeLimit', limit: 5},
+    {name: 'Orientation', value: orientation, type: 'alpha', selection: ['v', 'h']},
+    {name: 'Fit', value: fit, type: 'alpha', selection: ['cover', 'fill']},
+    {name: 'Share', value: share, type: '', selection: ['', 'twitter']},
+  ]);
+  if(validation.length != 0){
+    return res.json({ errors: validation });
+  }
 
   try {
     const paths = {
@@ -22,14 +41,19 @@ router.get('/', async (req, res, next) => {
     };
     
     if (!fs.existsSync(paths.downloads) || !fs.existsSync(paths.result)) {
-      res.json({ error: "Download folders not found" });
+      return res.json({ error: "Download folders not found" });
     }
 
     if(path.isAbsolute(paths.downloads) || path.isAbsolute(paths.result)) {
-      res.json({ error: "Download folders need to be relative paths" });
+      return res.json({ error: "Download folders need to be relative paths" });
     }
 
     const images = await article.getImagesFromDateRange(dateFrom, dateTo);
+
+    if(images.length <= 0){
+      return res.json({ error: `No images found with the search parameters, please adjust your date range and try again` });
+    }
+
     const config = barcode.createConfig(orientation, fit, images.length, width, height, paths);
     const updatedImages = barcode.createImagePaths(config, images);
     const imagePromises = barcode.getImages(config, updatedImages);
@@ -43,23 +67,24 @@ router.get('/', async (req, res, next) => {
             const img = fs.readFileSync(config.paths.output);
             res.writeHead(200, {'Content-Type': 'image/jpg' });
             res.end(img, 'binary');
+            return;
           })
           .catch((err) => {
-            res.json({ error: `finalImage: ${err}` });
+            return res.json({ error: `finalImage: ${err}` });
           });
       })
       .catch((err) => {
-        res.json({ error: `imagePromises: ${err}` });
+        return res.json({ error: `imagePromises: ${err}` });
       });
 	} catch (err) {
     next(err);
-    res.json({ error: `router: ${err}` });
+    return res.json({ error: `router: ${err}` });
 	}
 });
 
 function shareCheck(share, imagePath){
   if(share === 'twitter'){
-    barcode.postTwitter('I am a tweet', imagePath);
+    barcode.postTwitter('I am a test tweet', imagePath);
   }
 }
 
