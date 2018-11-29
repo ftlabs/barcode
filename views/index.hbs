@@ -1,25 +1,10 @@
 <!DOCTYPE html>
-<html lang="en">
-
+<html lang="en"></html>
   <head>
     <title>FT News Barcode [Beta]</title>
     <meta charset="utf-8" name="description" content="Grabs a selection of FT article images and squashes them into one image, look similar to a colourful barcode">
     <link rel="stylesheet" href="https://build.origami.ft.com/v2/bundles/css?modules=o-fonts@^3.0.4,o-buttons@^5.10.3,o-forms@^5.2.4">
-    <style>
-      body {
-        background: #fff1e5;
-        font-family: 'MetricWeb', sans-serif;
-      }
-      h1,
-      h2 {
-        font-family: 'FinancierDisplayWeb', serif;
-        text-transform: capitalize;
-      }
-      h2 {
-        font-family: 'MetricWeb', sans-serif;
-        font-size: 18px;
-      }
-    </style>
+    <link rel="stylesheet" href="/static/css/style.css">
   </head>
   <body>
     <h1>FT News Barcode [Beta]</h1>
@@ -85,56 +70,6 @@
     <p>
       e.g. <a href="/barcode?width=1024&height=768&dateFrom=2018-11-13&dateTo=2018-11-14&orientation=v&fit=fill">/barcode?width=1024&height=768&dateFrom=2018-11-13&dateTo=2018-11-14&orientation=v&fit=fill</a>
     </p>
-  
-    <script>
-      const queryLink	= document.getElementById('queryBuilderLink');
-      const width = document.getElementById('width');
-      const height = document.getElementById('height');
-      const dateFrom = document.getElementById('dateFrom');
-      const dateTo = document.getElementById('dateTo');
-      const orientation = document.getElementById('orientation');
-      const fit = document.getElementById('fit');
-      const share = document.getElementById('share');
-
-      function init(){
-        if(width !== undefined && height !== undefined && dateFrom !== undefined && dateTo !== undefined && orientation !== undefined && fit !== undefined && share !== undefined){
-          width.addEventListener('change', updateUrlBuilderLink, false);
-          height.addEventListener('change', updateUrlBuilderLink, false);
-          dateFrom.addEventListener('change', updateUrlBuilderLink, false);
-          dateTo.addEventListener('change', updateUrlBuilderLink, false);
-          orientation.addEventListener('change', updateUrlBuilderLink, false);
-          fit.addEventListener('change', updateUrlBuilderLink, false);
-          share.addEventListener('change', updateUrlBuilderLink, false);
-          updateUrlBuilderLink();
-        }
-      }
-
-      function updateUrlBuilderLink(){
-        const widthVal = width.value;
-        const heightVal = height.value;
-        const dateFromVal = dateFrom.value;
-        const dateToVal = dateTo.value;
-        const orientationVal = orientation.options[orientation.selectedIndex].value;
-        const fitVal = fit.options[fit.selectedIndex].value;
-        const shareVal = share.options[share.selectedIndex].value;
-        const shareCheck = (shareVal) ? `&share=${shareVal}` : '';
-
-        let str = `/barcode?width=${widthVal}&height=${heightVal}&dateFrom=${dateFromVal}&dateTo=${dateToVal}&orientation=${orientationVal}&fit=${fitVal}${shareCheck}`;
-
-        queryLink.href = str;
-        queryLink.innerHTML = str;
-      }
-
-      function getMultipleSelects(select){
-        return select.reduce( (result, item) => {
-          if(item.selected === true){
-            result.push(item.value);
-          }
-          return result;
-        }, []);
-      }
-
-      init();
-    </script>
+    <script src="/static/js/script.js"></script>
   </body>
 </html>
