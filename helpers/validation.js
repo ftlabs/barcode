@@ -56,8 +56,8 @@ function validateVars(input){
 function getCurrentDate(){
   const x = new Date();
   const y = x.getFullYear().toString();
-  const m = (x.getMonth() + 1).toString();
-  const d = x.getDate().toString();
+  let m = (x.getMonth() + 1).toString();
+  let d = x.getDate().toString();
   (d.length == 1) && (d = '0' + d);
   (m.length == 1) && (m = '0' + m);
   return `${y}-${m}-${d}`;
