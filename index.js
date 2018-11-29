@@ -7,7 +7,6 @@ const debug = require("debug")(`${package.name}:index`);
 const express = require("express");
 const path = require("path");
 const app = express();
-const validateRequest = require("./helpers/check-token");
 const barcode = require("./routes/barcode");
 
 if (process.env.NODE_ENV !== 'production') require('dotenv').config();
