@@ -2,6 +2,11 @@ const download = require('image-downloader');
 const graphicsmagick = require("gm");
 const filesystem = require("fs");
 const twitter = require('twitter');
+const crypto = require('crypto');
+
+function createHash(...vars){
+  return crypto.createHash('md5').update(vars.toString()).digest("hex");
+}
 
 function createConfig(orientation, fit, num, width, height, paths){
   const config = {
@@ -149,6 +154,7 @@ function pad(n, width, z) {
 
 
 module.exports = {
+  createHash,
   createConfig,
   createImagePaths,
   postTwitter,

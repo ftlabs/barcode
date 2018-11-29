@@ -14,7 +14,6 @@ router.get('/', async (req, res, next) => {
   const orientation = (req.query.orientation) ? req.query.orientation : 'h';
   const fit = (req.query.fit) ? req.query.fit : 'fill';
   const share = (req.query.share) ? req.query.share : '';
-
   const validation = valid.validateVars([
     {name: 'Width', value: width, type: 'dimensions'},
     {name: 'Height', value: height, type: 'dimensions'},
@@ -29,25 +28,27 @@ router.get('/', async (req, res, next) => {
     {name: 'Fit', value: fit, type: 'alpha', selection: ['cover', 'fill']},
     {name: 'Share', value: share, type: '', selection: ['', 'twitter']},
   ]);
+
   if(validation.length != 0){
     return res.json({ errors: validation });
   }
 
-
-  //check if image exists already
-  /*
-    console.log('retrieving cached image x');
-    const img = fs.readFileSync(config.paths.output);
-    res.writeHead(200, {'Content-Type': 'image/jpg' });
-    res.end(img, 'binary');
-  */
-
-
   try {
+    const hash = barcode.createHash(width, height, dateFrom, dateTo, orientation, fit, share);
+    const finalFilepath = `${process.env.RESULT_FOLDER}/output_${hash}.jpg`;
+
+    if(fs.existsSync(finalFilepath)){
+      res.writeHead(200, {'Content-Type': 'image/jpg' });
+      res.end(fs.readFileSync(finalFilepath), 'binary');
+      return;
+    }
+
+    createHashFolder(hash, process.env.DOWNLOAD_FOLDER);
+
     const paths = {
-      downloads: `${process.env.DOWNLOAD_FOLDER}`,
+      downloads: `${process.env.DOWNLOAD_FOLDER}/${hash}`,
       result: `${process.env.RESULT_FOLDER}`,
-      output: `${process.env.RESULT_FOLDER}/output.jpg`
+      output: finalFilepath
     };
     
     if (!fs.existsSync(paths.downloads) || !fs.existsSync(paths.result)) {
@@ -74,9 +75,9 @@ router.get('/', async (req, res, next) => {
         finalImage
           .then(() => shareCheck(share, config.paths.output))
           .then(() => {
-            const img = fs.readFileSync(config.paths.output);
+            removeHashFolderAndContents(hash, process.env.DOWNLOAD_FOLDER);
             res.writeHead(200, {'Content-Type': 'image/jpg' });
-            res.end(img, 'binary');
+            res.end(fs.readFileSync(config.paths.output), 'binary');
             return;
           })
           .catch((err) => {
@@ -96,6 +97,31 @@ function shareCheck(share, imagePath){
   if(share === 'twitter'){
     barcode.postTwitter('I am a test tweet', imagePath);
   }
+}
+
+function createHashFolder(hash, dir){
+  if (!fs.existsSync(`${dir}/${hash}`)){
+    fs.mkdirSync(`${dir}/${hash}`);
+  }
+}
+
+function removeHashFolderAndContents(hash, dir){
+  const dirPath = `${dir}/${hash}`;
+  let files;
+  try {
+    files = fs.readdirSync(dirPath);
+  } catch(e) {
+    return;
+  }
+  if (files.length > 0)
+    for (let i = 0; i < files.length; i++) {
+      const filePath = dirPath + '/' + files[i];
+      if (fs.statSync(filePath).isFile())
+        fs.unlinkSync(filePath);
+      else
+        rmDir(filePath);
+    }
+  fs.rmdirSync(dirPath);
 }
 
 module.exports = router;
