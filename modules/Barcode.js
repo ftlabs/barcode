@@ -117,7 +117,7 @@ function getDownloadPromise(config, image, i) {
       });
   })
   .catch(function(err){
-    reject(err);
+    console.log(err);
   });
 
   return downloadPromise;
