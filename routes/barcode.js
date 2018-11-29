@@ -33,6 +33,16 @@ router.get('/', async (req, res, next) => {
     return res.json({ errors: validation });
   }
 
+
+  //check if image exists already
+  /*
+    console.log('retrieving cached image x');
+    const img = fs.readFileSync(config.paths.output);
+    res.writeHead(200, {'Content-Type': 'image/jpg' });
+    res.end(img, 'binary');
+  */
+
+
   try {
     const paths = {
       downloads: `${process.env.DOWNLOAD_FOLDER}`,
