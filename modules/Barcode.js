@@ -9,6 +9,7 @@ function createHash(...vars){
 }
 
 function createConfig(orientation, fit, num, width, height, paths){
+  console.log('createConfig');
   const config = {
     orientation : orientation,
     width: width,
@@ -37,6 +38,7 @@ function createConfig(orientation, fit, num, width, height, paths){
 }
 
 function createImagePaths(config, images){
+  console.log('createImagePaths');
   if(config.fit === 'fill'){
     return images.map(url => {
       const parts = url.split('?');
@@ -77,14 +79,16 @@ function postTwitter(message, mediaPath){
 
 function getImages(config, images) {
   const promiseList = [];
+  console.log('getImages');
   images.forEach((image, i) => {
     promiseList.push(getDownloadPromise(config, image, i, config.orientation, config.paths.downloads));
   });
+  console.log('getImages: out');
   return promiseList;
 }
 
 function getDownloadPromise(config, image, i) {
-  return newPromise = new Promise(function(resolve, reject) {
+  return new Promise(function(resolve, reject) {
     const options = {
       url: image,
       dest: `${config.paths.downloads}/${pad((i + 1), 5, '0')}.jpg`
@@ -92,12 +96,12 @@ function getDownloadPromise(config, image, i) {
 
     download.image(options)
       .then(({ filename }) => {
-
         if(config.orientation === 'h'){
           graphicsmagick(filename)
             .resize(config.width, config.span, "!")
             .write(filename, function (err) {
               if (err) {
+                console.log('download if' + err)
                 throw err;
               }
               resolve();
@@ -107,6 +111,7 @@ function getDownloadPromise(config, image, i) {
             .resize(config.span, config.height, "!")
             .write(filename, function (err) {
               if (err){
+                console.log('download else' + err)
                 throw err;
               }
               resolve();
@@ -120,7 +125,8 @@ function getDownloadPromise(config, image, i) {
 }
 
 function createStitchedImage(config, imagePromises){
-  return new Promise(function(resolve, reject) {
+  console.log('createStitchedImage');
+  return new Promise(function(resolve) {
     const renderGm = graphicsmagick();
 
     for(let i = 0; i < imagePromises.length; i++){

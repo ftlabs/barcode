@@ -39,8 +39,7 @@ router.get('/', async (req, res, next) => {
 
     if(fs.existsSync(finalFilepath)){
       res.writeHead(200, {'Content-Type': 'image/jpg' });
-      res.end(fs.readFileSync(finalFilepath), 'binary');
-      return;
+      return res.end(fs.readFileSync(finalFilepath), 'binary');
     }
 
     createHashFolder(hash, process.env.DOWNLOAD_FOLDER);
@@ -67,14 +66,21 @@ router.get('/', async (req, res, next) => {
 
     const config = barcode.createConfig(orientation, fit, images.length, width, height, paths);
     const updatedImages = barcode.createImagePaths(config, images);
+
+    console.log(updatedImages);
+
     const imagePromises = barcode.getImages(config, updatedImages);
+
+    console.log('marker 1');
 
     Promise.all(imagePromises)
       .then(function(values) {
-        const finalImage = barcode.createStitchedImage(config, imagePromises);
-        finalImage
+        console.log('marker 2');
+        console.log('imagePromises');
+        const finalImage = barcode.createStitchedImage(config, imagePromises)
           .then(() => shareCheck(share, config.paths.output))
           .then(() => {
+            console.log('final');
             res.writeHead(200, {'Content-Type': 'image/jpg' });
             res.end(fs.readFileSync(config.paths.output), 'binary');
             removeHashFolderAndContents(hash, process.env.DOWNLOAD_FOLDER);
