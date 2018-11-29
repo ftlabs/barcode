@@ -39,6 +39,11 @@ function validateVars(input){
           errors.push(`${item.name[0]} needs to be less than ${item.name[1]}`);
         }
         break;
+      case 'notMatching':
+        if(item.value[0] === item.value[1]) {
+          errors.push(`${item.name[0]} cannot match ${item.name[1]}`);
+        }
+        break;
     }
     if('selection' in item && item.selection.indexOf(item.value) < 0){
       errors.push(`${item.name} needs to be one of the following values: ${item.selection.join(',')}`);

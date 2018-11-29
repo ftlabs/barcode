@@ -22,6 +22,7 @@ router.get('/', async (req, res, next) => {
     {name: 'DateTo', value: dateTo, type: 'date'},
     {name: 'DateTo', value: dateTo, type: 'datePast'},
     {name: ['dateFrom', 'dateTo'], value: [dateFrom, dateTo], type: 'lessThan'},
+    {name: ['dateFrom', 'dateTo'], value: [dateFrom, dateTo], type: 'notMatching'},
     {name: 'Orientation', value: orientation, type: 'alpha', selection: ['v', 'h']},
     {name: 'Fit', value: fit, type: 'alpha', selection: ['cover', 'fill']},
     {name: 'Share', value: share, type: '', selection: ['', 'twitter']},
@@ -47,6 +48,11 @@ router.get('/', async (req, res, next) => {
     }
 
     const images = await article.getImagesFromDateRange(dateFrom, dateTo);
+
+    if(images.length <= 0){
+      res.json({ error: `No images found with the search parameters, please adjust your date range and try again` }); return;
+    }
+
     const config = barcode.createConfig(orientation, fit, images.length, width, height, paths);
     const updatedImages = barcode.createImagePaths(config, images);
     const imagePromises = barcode.getImages(config, updatedImages);
