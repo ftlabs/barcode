@@ -88,7 +88,6 @@ router.get('/', async (req, res, next) => {
         return res.json({ error: `imagePromises: ${err}` });
       });
 	} catch (err) {
-    next(err);
     return res.json({ error: `router: ${err}` });
 	}
 });

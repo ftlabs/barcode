@@ -26,16 +26,8 @@ app.use(requestLogger);
 // these routes do *not* have s3o
 app.use("/static", express.static("static"));
 
-const TOKEN = process.env.TOKEN;
-if (!TOKEN) {
-  throw new Error("ERROR: TOKEN not specified in env");
-}
-
 // these route *do* use s3o
 app.set("json spaces", 2);
-if (process.env.BYPASS_TOKEN !== "true") {
-  app.use(validateRequest);
-}
 
 //Core Routes
 app.use("/barcode", barcode);
