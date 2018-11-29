@@ -80,7 +80,6 @@ You can also optionally pass the following parameters:
 + **dateTo** - date to end image selection on - *default 2018-11-16*
 + **orientation** - stack images horizontally or vertically - **h/v** - *default h*
 + **fit** - gets images as masks or squashed - **fill/cover** - *default fill*
-+ **share** - option to share to social media [optional] - **twitter** - *default undefined*
 
 
 ### What technologies does it use?
