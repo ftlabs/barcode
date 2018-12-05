@@ -3,10 +3,12 @@ const path = require('path');
 const fs = require('fs');
 const router = express.Router();
 const valid = require('../helpers/validation');
+const actionTimer = require('../helpers/actionTimer');
 const article = require('../modules/Article');
 const barcode = require('../modules/Barcode');
 
-router.get('/', async (req, res, next) => {
+router.get('/', async (req, res) => {
+  const at = new actionTimer();
   const width = (req.query.width) ? req.query.width : 1024;
   const height = (req.query.height) ? req.query.height : 768;
   const dateFrom = (req.query.dateFrom) ? req.query.dateFrom : '2018-11-15';
@@ -29,7 +31,10 @@ router.get('/', async (req, res, next) => {
     {name: 'Share', value: share, type: '', selection: ['', 'twitter']},
   ]);
 
+  at.log('Start request');
+
   if(validation.length != 0){
+    at.log('Validation errors');
     return res.json({ errors: validation });
   }
 
@@ -37,10 +42,15 @@ router.get('/', async (req, res, next) => {
     const hash = barcode.createHash(width, height, dateFrom, dateTo, orientation, fit, share);
     const finalFilepath = `${process.env.RESULT_FOLDER}/output_${hash}.jpg`;
 
+    at.log('Check if image exists already');
+
     if(fs.existsSync(finalFilepath)){
+      at.log(`Image exists: ${finalFilepath}`);
       res.writeHead(200, {'Content-Type': 'image/jpg' });
       return res.end(fs.readFileSync(finalFilepath), 'binary');
     }
+
+    at.log('Create folders');
 
     createHashFolder(hash, process.env.DOWNLOAD_FOLDER);
 
@@ -49,6 +59,8 @@ router.get('/', async (req, res, next) => {
       result: `${process.env.RESULT_FOLDER}`,
       output: finalFilepath
     };
+
+    at.log('Check filepaths');
     
     if (!fs.existsSync(paths.downloads) || !fs.existsSync(paths.result)) {
       return res.json({ error: "Download folders not found" });
@@ -58,21 +70,38 @@ router.get('/', async (req, res, next) => {
       return res.json({ error: "Download folders need to be relative paths" });
     }
 
+    at.log('getImagesFromDateRange');
+
     const images = await article.getImagesFromDateRange(dateFrom, dateTo);
 
     if(images.length <= 0){
+      at.log('No images found with the search parameters');
       return res.json({ error: `No images found with the search parameters, please adjust your date range and try again` });
     }
 
+    at.log('createConfig');
+
     const config = barcode.createConfig(orientation, fit, images.length, width, height, paths);
+
+    at.log('createImagePaths');
+
     const updatedImages = barcode.createImagePaths(config, images);
+
+    at.log('getImages');
+
     const imagePromises = barcode.getImages(config, updatedImages);
+
+    at.log('Start image stitch');
 
     Promise.all(imagePromises)
       .then(function(values) {
         barcode.createStitchedImage(config, imagePromises, values)
-          .then(() => shareCheck(share, config.paths.output))
           .then(() => {
+            at.log('Share check');
+            shareCheck(share, config.paths.output)
+          })
+          .then(() => {
+            at.log('Image returned');
             res.writeHead(200, {'Content-Type': 'image/jpg' });
             res.end(fs.readFileSync(config.paths.output), 'binary');
             removeHashFolderAndContents(hash, process.env.DOWNLOAD_FOLDER);

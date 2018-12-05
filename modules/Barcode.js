@@ -3,6 +3,7 @@ const graphicsmagick = require("gm");
 const filesystem = require("fs");
 const twitter = require('twitter');
 const crypto = require('crypto');
+const actionTimer = require('../helpers/actionTimer'); 
 
 function createHash(...vars){
   return crypto.createHash('md5').update(vars.toString()).digest("hex");
@@ -85,17 +86,23 @@ function getImages(config, images) {
 
 function getDownloadPromise(config, image, i) {
   const downloadPromise = new Promise(function(resolve, reject) {
+    const at = new actionTimer();
+
     const options = {
       url: image,
       dest: `${config.paths.downloads}/${pad((i + 1), 5, '0')}.jpg`
     };
 
+    at.log(`${i} image request`);
+
     download.image(options)
       .then(({ filename }) => {
+        at.log(`${i} image downloaded`);
         if(config.orientation === 'h'){
           graphicsmagick(filename)
             .resize(config.width, config.span, "!")
             .write(filename, function (err) {
+              at.log(`${i} image adjusted`);
               if (err) {
                 throw err;
               }
@@ -105,6 +112,7 @@ function getDownloadPromise(config, image, i) {
           graphicsmagick(filename)
             .resize(config.span, config.height, "!")
             .write(filename, function (err) {
+              at.log(`${i} image adjusted`);
               if (err){
                 throw err;
               }
@@ -126,6 +134,7 @@ function getDownloadPromise(config, image, i) {
 function createStitchedImage(config, imagePromises, values){
   return new Promise(function(resolve) {
     const renderGm = graphicsmagick();
+    const at = new actionTimer();
 
     let i = 0;
     let tracker = 0;
@@ -141,16 +150,26 @@ function createStitchedImage(config, imagePromises, values){
           renderGm.in('-page', `+${pos}+0`)
             .in(`${config.paths.downloads}/${name}.jpg`);
         }
+
+        at.log(`image ${i} added`);
+
         i++;
       }
+
       tracker++;
     });
+
+    at.log('write final image');
 
     renderGm.mosaic()
       .write(config.paths.output, function (err) {
           if (err){
             throw err;
           };
+
+          at.log('final image created');
+          at.divider();
+
           resolve();
       });
   });
