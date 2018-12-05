@@ -1,4 +1,5 @@
-const download = require('image-downloader');
+const sharp = require('sharp');
+const https = require('https');
 const graphicsmagick = require("gm");
 const filesystem = require("fs");
 const twitter = require('twitter');
@@ -11,8 +12,8 @@ function createHash(...vars){
 function createConfig(orientation, fit, num, width, height, paths){
   const config = {
     orientation : orientation,
-    width: width,
-    height: height,
+    width: parseInt(width),
+    height: parseInt(height),
     span: 0,
     fit: fit,
     paths: paths
@@ -85,36 +86,24 @@ function getImages(config, images) {
 
 function getDownloadPromise(config, image, i) {
   const downloadPromise = new Promise(function(resolve, reject) {
-    const options = {
-      url: image,
-      dest: `${config.paths.downloads}/${pad((i + 1), 5, '0')}.jpg`
-    };
+    const destination = `${config.paths.downloads}/${pad((i + 1), 5, '0')}.jpg`;
+    const width =  (config.orientation === 'h') ? config.width : config.span;
+    const height =  (config.orientation === 'h') ? config.span : config.height;
+    const resizeTransform = sharp().resize(width, height , { fit: 'fill' });
 
-    download.image(options)
-      .then(({ filename }) => {
-        if(config.orientation === 'h'){
-          graphicsmagick(filename)
-            .resize(config.width, config.span, "!")
-            .write(filename, function (err) {
-              if (err) {
-                throw err;
-              }
-              resolve('complete');
-            });
-        } else {
-          graphicsmagick(filename)
-            .resize(config.span, config.height, "!")
-            .write(filename, function (err) {
-              if (err){
-                throw err;
-              }
-              resolve('complete');
-            });
-        }
-      })
-      .catch((err) => {
-        reject(err);
+    https.get(image, downloadStream => {
+      let writeStream = filesystem.createWriteStream(destination);
+      downloadStream.pipe(resizeTransform).pipe(writeStream);
+
+      writeStream.on('finish', () => {
+        writeStream.end();
+        resolve('ok');
       });
+
+      writeStream.on('error', (err) => { reject(err); });
+      downloadStream.on('error', (err) => { reject(err); });
+      resizeTransform.on('error', (err) => { reject(err); });
+    });
   })
   .catch(function(err){
     console.log(err);
@@ -130,6 +119,7 @@ function createStitchedImage(config, imagePromises, values){
     let i = 0;
     let tracker = 0;
     imagePromises.forEach(image => {
+
       if(values[tracker] !== undefined){
         const name = pad((i + 1), 5, '0');
         const pos = (i * config.span);

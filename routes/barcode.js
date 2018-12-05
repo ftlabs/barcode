@@ -2,6 +2,7 @@ const express = require('express');
 const path = require('path');
 const fs = require('fs');
 const router = express.Router();
+const cache = require('../helpers/cache');
 const valid = require('../helpers/validation');
 const article = require('../modules/Article');
 const barcode = require('../modules/Barcode');
@@ -37,7 +38,7 @@ router.get('/', async (req, res, next) => {
     const hash = barcode.createHash(width, height, dateFrom, dateTo, orientation, fit, share);
     const finalFilepath = `${process.env.RESULT_FOLDER}/output_${hash}.jpg`;
 
-    if(fs.existsSync(finalFilepath)){
+    if(cache.get(hash)){
       res.writeHead(200, {'Content-Type': 'image/jpg' });
       return res.end(fs.readFileSync(finalFilepath), 'binary');
     }
@@ -76,6 +77,7 @@ router.get('/', async (req, res, next) => {
             res.writeHead(200, {'Content-Type': 'image/jpg' });
             res.end(fs.readFileSync(config.paths.output), 'binary');
             removeHashFolderAndContents(hash, process.env.DOWNLOAD_FOLDER);
+            cache.set(hash, finalFilepath);
             return;
           })
           .catch((err) => {
