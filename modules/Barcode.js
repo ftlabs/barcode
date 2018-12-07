@@ -5,8 +5,8 @@ const filesystem = require("fs");
 const twitter = require('twitter');
 const crypto = require('crypto');
 
-function createHash(...vars){
-  return crypto.createHash('md5').update(vars.toString()).digest("hex");
+function createHash(...items){
+  return crypto.createHash('md5').update(items.toString()).digest("hex");
 }
 
 function createConfig(orientation, fit, num, width, height, paths){
@@ -38,16 +38,13 @@ function createConfig(orientation, fit, num, width, height, paths){
 }
 
 function createImagePaths(config, images){
-  if(config.fit === 'fill'){
-    return images.map(url => {
-      const parts = url.split('?');
-      return parts[0].concat(`?source=ftlabs-barcode&width=10&height=10&quality=highest&fit=${config.fit}`);
-    });
-  }
-  
-  return images.map(url => {
-    const parts = url.split('?');
-    return parts[0].concat(`?source=ftlabs-barcode&width=${config.width}&height=${config.height}&quality=highest&fit=${config.fit}`);
+  const width = (config.fit === 'fill') ? 10 : config.width;
+  const height = (config.fit === 'fill') ? 10 : config.height;
+  return images.map(id => {
+    return {
+      id: id,
+      path: `https://www.ft.com/__origami/service/image/v2/images/raw/http%3A%2F%2Fprod-upp-image-read.ft.com%2F${id}?source=ftlabs-barcode&width=${width}&height=${height}&quality=highest&fit=${config.fit}`
+    };
   });
 }
 
@@ -76,33 +73,42 @@ function postTwitter(message, mediaPath){
   });
 }
 
-function getImages(config, images) {
+function getImagePromises(config, paths) {
   const promiseList = [];
-  images.forEach((image, i) => {
-    promiseList.push(getDownloadPromise(config, image, i, config.orientation, config.paths.downloads));
+  paths.forEach(imageItem => {
+    promiseList.push(getDownloadPromise(config, imageItem));
   });
   return promiseList;
 }
 
-function getDownloadPromise(config, image, i) {
+function getDownloadPromise(config, imageItem) {
   const downloadPromise = new Promise(function(resolve, reject) {
-    const destination = `${config.paths.downloads}/${pad((i + 1), 5, '0')}.jpg`;
+    const destination = `${config.paths.downloads}/${imageItem.id}.jpg`;
     const width =  (config.orientation === 'h') ? config.width : config.span;
     const height =  (config.orientation === 'h') ? config.span : config.height;
-    const resizeTransform = sharp().resize(width, height , { fit: 'fill' });
+    const resizeTransform = sharp().resize(width, height , { fit: config.fit });
 
-    https.get(image, downloadStream => {
+    https.get(imageItem.path, downloadStream => {
       let writeStream = filesystem.createWriteStream(destination);
       downloadStream.pipe(resizeTransform).pipe(writeStream);
 
+      const winState = {
+        id: imageItem.id,
+        status: 1
+      }
+      const failState = {
+        id: imageItem.id,
+        status: 0
+      }
+
       writeStream.on('finish', () => {
         writeStream.end();
-        resolve('ok');
+        resolve(winState);
       });
 
-      writeStream.on('error', (err) => { reject(err); });
-      downloadStream.on('error', (err) => { reject(err); });
-      resizeTransform.on('error', (err) => { reject(err); });
+      writeStream.on('error', (err) => { reject(failStated); });
+      downloadStream.on('error', (err) => { reject(failState); });
+      resizeTransform.on('error', (err) => { reject(failState); });
     });
   })
   .catch(function(err){
@@ -112,28 +118,22 @@ function getDownloadPromise(config, image, i) {
   return downloadPromise;
 }
 
-function createStitchedImage(config, imagePromises, values){
+function createStitchedImage(config, imageIDs){
   return new Promise(function(resolve) {
     const renderGm = graphicsmagick();
 
     let i = 0;
-    let tracker = 0;
-    imagePromises.forEach(image => {
+    imageIDs.forEach(image => {
+      const pos = (i * config.span);
 
-      if(values[tracker] !== undefined){
-        const name = pad((i + 1), 5, '0');
-        const pos = (i * config.span);
-
-        if(config.orientation === 'h'){
-          renderGm.in('-page', `+0+${pos}`)
-            .in(`${config.paths.downloads}/${name}.jpg`);
-        } else {
-          renderGm.in('-page', `+${pos}+0`)
-            .in(`${config.paths.downloads}/${name}.jpg`);
-        }
-        i++;
+      if(config.orientation === 'h'){
+        renderGm.in('-page', `+0+${pos}`)
+          .in(`${config.paths.downloads}/${image}.jpg`);
+      } else {
+        renderGm.in('-page', `+${pos}+0`)
+          .in(`${config.paths.downloads}/${image}.jpg`);
       }
-      tracker++;
+      i++;
     });
 
     renderGm.mosaic()
@@ -146,19 +146,12 @@ function createStitchedImage(config, imagePromises, values){
   });
 }
 
-function pad(n, width, z) {
-  z = z || '0';
-  n = n + '';
-  return n.length >= width ? n : new Array(width - n.length + 1).join(z) + n;
-}
-
-
 module.exports = {
   createHash,
   createConfig,
   createImagePaths,
   postTwitter,
-  getImages,
+  getImagePromises,
   getDownloadPromise,
   createStitchedImage
 };

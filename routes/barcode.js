@@ -43,46 +43,65 @@ router.get('/', async (req, res, next) => {
       return res.end(fs.readFileSync(finalFilepath), 'binary');
     }
 
-    createHashFolder(hash, process.env.DOWNLOAD_FOLDER);
-
     const paths = {
-      downloads: `${process.env.DOWNLOAD_FOLDER}/${hash}`,
+      downloads: `${process.env.DOWNLOAD_FOLDER}/${fit}-${orientation}`,
       result: `${process.env.RESULT_FOLDER}`,
       output: finalFilepath
     };
-    
+
     if (!fs.existsSync(paths.downloads) || !fs.existsSync(paths.result)) {
-      return res.json({ error: "Download folders not found" });
+      return res.json({ error: `Download ${fit} folder not found` });
     }
 
     if(path.isAbsolute(paths.downloads) || path.isAbsolute(paths.result)) {
       return res.json({ error: "Download folders need to be relative paths" });
     }
 
-    const images = await article.getImagesFromDateRange(dateFrom, dateTo);
+    const allImageIds = await article.getImageIdsFromDateRange(dateFrom, dateTo);
 
-    if(images.length <= 0){
+    if(allImageIds.length <= 0){
       return res.json({ error: `No images found with the search parameters, please adjust your date range and try again` });
     }
 
-    const config = barcode.createConfig(orientation, fit, images.length, width, height, paths);
-    const updatedImages = barcode.createImagePaths(config, images);
-    const imagePromises = barcode.getImages(config, updatedImages);
+    const config = barcode.createConfig(orientation, fit, allImageIds.length, width, height, paths);
+    const imageFolder = `${fit}-${orientation}`;
 
-    Promise.all(imagePromises)
-      .then(function(values) {
-        barcode.createStitchedImage(config, imagePromises, values)
+    const uncachedImages = getUncachedImages(allImageIds, fit, cache.get(imageFolder));
+    const uncachedImagePaths = barcode.createImagePaths(config, uncachedImages);
+    const uncachedImagePromises = barcode.getImagePromises(config, uncachedImagePaths);
+
+    Promise.all(uncachedImagePromises)
+      .then(values => splitNewAndFailed(values))
+      .then(promiseResults => {
+
+        //add new images to cache
+        const fitImageList = cache.get(imageFolder);
+        if(fitImageList && fitImageList.length > 0){
+          const newList = fitImageList.concat(promiseResults.new);
+          cache.set(imageFolder, newList);
+        } else {
+          cache.set(imageFolder, promiseResults.new);
+        }
+
+        //remove missing images from allImageIds
+        const failedImages = promiseResults.failed;
+        failedImages.forEach(id => {
+          allImageIds.splice(allImageIds.indexOf(id), 1);
+        });
+
+        //stitch new image
+        barcode.createStitchedImage(config, allImageIds)
           .then(() => shareCheck(share, config.paths.output))
           .then(() => {
             res.writeHead(200, {'Content-Type': 'image/jpg' });
             res.end(fs.readFileSync(config.paths.output), 'binary');
-            removeHashFolderAndContents(hash, process.env.DOWNLOAD_FOLDER);
             cache.set(hash, finalFilepath);
             return;
           })
           .catch((err) => {
             return res.json({ error: `finalImage: ${err}` });
           });
+          
       })
       .catch((err) => {
         return res.json({
@@ -92,8 +111,42 @@ router.get('/', async (req, res, next) => {
       });
 	} catch (err) {
     return res.json({ error: `router: ${err}` });
-	}
+  }
+  
 });
+
+function getUncachedImages(imageIds, fit, fitImageList){
+  const missingImages = [];
+
+  if(fitImageList && fitImageList.length > 0){
+    imageIds.forEach(id => {
+      if(!fitImageList.includes(id)){
+        missingImages.push(id);
+      }
+    });
+    return missingImages;
+  }
+
+  return imageIds;
+}
+
+function splitNewAndFailed(values){
+  const newImages = [];
+  const failedImages = [];
+
+  values.forEach(item => {
+    if(item.status){
+      newImages.push(item.id);
+    } else {
+      failedImages.push(item.id);
+    }
+  })
+
+  return {
+    new: newImages,
+    failed: failedImages
+  }
+}
 
 function shareCheck(share, imagePath){
   if(share === 'twitter'){
@@ -101,29 +154,5 @@ function shareCheck(share, imagePath){
   }
 }
 
-function createHashFolder(hash, dir){
-  if (!fs.existsSync(`${dir}/${hash}`)){
-    fs.mkdirSync(`${dir}/${hash}`);
-  }
-}
-
-function removeHashFolderAndContents(hash, dir){
-  const dirPath = `${dir}/${hash}`;
-  let files;
-  try {
-    files = fs.readdirSync(dirPath);
-  } catch(e) {
-    return;
-  }
-  if (files.length > 0)
-    for (let i = 0; i < files.length; i++) {
-      const filePath = dirPath + '/' + files[i];
-      if (fs.statSync(filePath).isFile())
-        fs.unlinkSync(filePath);
-      else
-        rmDir(filePath);
-    }
-  fs.rmdirSync(dirPath);
-}
 
 module.exports = router;
