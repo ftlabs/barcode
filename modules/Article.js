@@ -1,9 +1,9 @@
 const fetchContent = require('../lib/fetchContent');
 
-function getImagesFromDateRange(dateFrom, dateTo) {
-  return fetchContent.getImagesFromDateRange(dateFrom, dateTo);
+function getImageIdsFromDateRange(dateFrom, dateTo) {
+  return fetchContent.getImageIdsFromDateRange(dateFrom, dateTo);
 }
 
 module.exports = {
-	getImagesFromDateRange
+	getImageIdsFromDateRange
 };

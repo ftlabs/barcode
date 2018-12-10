@@ -53,14 +53,17 @@ The created image is then posted to Twitter.
 
 ### How does that look?
 
-![Alt text](./docs/example_horizontal.jpg?raw=true "Example Horizontal Barcode image")
-*Images from 10th Nov - 14th Nov 2018 in a horizontal stack*
+![Alt text](./docs/vertical_fill.png?raw=true "Example Vertical line image with fill parameter")
+*Images from 13th Nov - 14th Nov 2018 using vertical & fill parameters*
 
-![Alt text](./docs/example_vertical.jpg?raw=true "Example Vertical Barcode image")
-*Images from 10th Nov - 14th Nov 2018 in a vertical stack*
+![Alt text](./docs/vertical_cover.png?raw=true "Example Vertical line image with cover parameter")
+*Images from 13th Nov - 14th Nov 2018 using vertical & cover parameters*
 
-![Alt text](./docs/updated_horizontal.png?raw=true "Example (updated) Horizontal Barcode image")
-*[UPDATED] Images from 19th Nov - 20th Nov 2018 in a horizontal stack*
+![Alt text](./docs/horizontal_fill.png?raw=true "Example Vertical line image with fill parameter")
+*Images from 13th Nov - 14th Nov 2018 using horizontal & fill parameters*
+
+![Alt text](./docs/horizontal_cover.png?raw=true "Example Vertical line image with cover parameter")
+*Images from 13th Nov - 14th Nov 2018 using horizontal & cover parameters*
 
 
 ### How can I use it?
