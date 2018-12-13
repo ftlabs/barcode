@@ -49,7 +49,12 @@ function getDateToQueryTime(date){
   return new Date(date).toISOString().split('.')[0] + "Z";
 }
 
+function getDateTimeToQueryTime(date, time){
+  return new Date(`${date} ${time}`).toISOString().split('.')[0] + "Z";
+}
+
 module.exports = {
   getDatetimeRange,
-  getDateToQueryTime
+  getDateToQueryTime,
+  getDateTimeToQueryTime
 };

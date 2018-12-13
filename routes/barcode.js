@@ -40,7 +40,7 @@ router.get('/', async (req, res, next) => {
   }
 
   try {
-    const hash = barcode.createHash(width, height, dateFrom, dateTo, orientation, fit, share);
+    const hash = barcode.createHash(width, height, dateFrom, dateTo, timeFrom, timeTo, orientation, fit, share);
     const finalFilepath = `${process.env.RESULT_FOLDER}/output_${hash}.jpg`;
 
     if(cache.get(hash)){
@@ -62,7 +62,7 @@ router.get('/', async (req, res, next) => {
       return res.json({ error: "Download folders need to be relative paths" });
     }
 
-    const allImageIds = await article.getImageIdsFromDateRange(dateFrom, dateTo);
+    const allImageIds = await article.getImageIdsFromDateRange(dateFrom, dateTo, timeFrom, timeTo);
 
     if(allImageIds.length <= 0){
       return res.json({ error: `No images found with the search parameters, please adjust your date range and try again` });
