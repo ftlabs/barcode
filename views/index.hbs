@@ -19,6 +19,10 @@
       <input type="date" id="dateFrom" name="dateFrom" min="2018-01-01" max="2018-11-14" placeholder="2018-11-13" value="2018-11-13">
       <span>&dateTo=</span>
       <input type="date" id="dateTo" name="dateTo" min="2018-01-01" max="2018-11-14"  placeholder="2018-11-14" value="2018-11-14">
+      <span>&timeFrom=</span>
+      <input type="time" id="timeFrom" name="dateFrom" min="00:00:00" max="23:59:59" placeholder="00:00:00" value="00:00:00">
+      <span>&timeTo=</span>
+      <input type="time" id="timeTo" name="dateTo" min="00:00:00" max="23:59:59"  placeholder="00:00:00" value="00:00:00">
       <span>&orientation=</span>
       <select id="orientation" name="orientation">
         <option value="h" selected>horizontal</option>
@@ -56,6 +60,12 @@
         <b>dateTo</b> <i>date</i> : date to end image selection on, yyyy/mm/dd format- <i>(default 2018-11-16)</i> 
       </li>
       <li>
+        <b>timeFrom</b> <i>time</i> : time to start image selection from, hh/mm/ss format- <i>(default 00:00:00)</i> 
+      </li>
+      <li>
+        <b>timeTo</b> <i>time</i> : time to end image selection on, hh/mm/ss format- <i>(default 00:00:00)</i> 
+      </li>
+      <li>
         <b>orientation</b> <i>string</i> : stack images horizontally or vertically - <i>(h default)</i>
       </li>
       <li>
@@ -63,7 +73,7 @@
       </li>
     </ul>
     <p>
-      e.g. <a target="_blank" href="/barcode?width=1024&height=768&dateFrom=2018-11-13&dateTo=2018-11-14&orientation=v&fit=fill">/barcode?width=1024&height=768&dateFrom=2018-11-13&dateTo=2018-11-14&orientation=v&fit=fill</a>
+      e.g. <a target="_blank" href="/barcode?width=1024&height=768&dateFrom=2018-11-13&dateTo=2018-11-14&timeFrom=00:00:00&timeTo=00:00:00&orientation=v&fit=fill">/barcode?width=1024&height=768&dateFrom=2018-11-13&dateTo=2018-11-14&timeFrom=00:00:00&timeTo=00:00:00&orientation=v&fit=fill</a>
     </p>
     <script src="/static/js/script.js"></script>
   </body>

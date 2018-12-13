@@ -12,9 +12,12 @@ router.get('/', async (req, res, next) => {
   const height = (req.query.height) ? req.query.height : 768;
   const dateFrom = (req.query.dateFrom) ? req.query.dateFrom : '2018-11-15';
   const dateTo = (req.query.dateTo) ? req.query.dateTo : '2018-11-16';
+  const timeFrom = (req.query.timeFrom) ? req.query.timeFrom : '00:00:00';
+  const timeTo = (req.query.timeTo) ? req.query.timeTo : '00:00:00';
   const orientation = (req.query.orientation) ? req.query.orientation : 'h';
   const fit = (req.query.fit) ? req.query.fit : 'fill';
   const share = (req.query.share) ? req.query.share : '';
+
   const validation = valid.validateVars([
     {name: 'Width', value: width, type: 'dimensions'},
     {name: 'Height', value: height, type: 'dimensions'},
@@ -25,6 +28,8 @@ router.get('/', async (req, res, next) => {
     {name: ['dateFrom', 'dateTo'], value: [dateFrom, dateTo], type: 'lessThan'},
     {name: ['dateFrom', 'dateTo'], value: [dateFrom, dateTo], type: 'notMatching'},
     {name: ['dateFrom', 'dateTo'], value: [dateFrom, dateTo], type: 'dateRangeLimit', limit: 5},
+    {name: 'timeFrom', value: timeFrom, type: 'time'},
+    {name: 'timeTo', value: timeTo, type: 'time'},
     {name: 'Orientation', value: orientation, type: 'alpha', selection: ['v', 'h']},
     {name: 'Fit', value: fit, type: 'alpha', selection: ['cover', 'fill']},
     {name: 'Share', value: share, type: '', selection: ['', 'twitter']},
