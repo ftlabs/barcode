@@ -84,8 +84,17 @@ function getImagePromises(config, paths) {
 function getDownloadPromise(config, imageItem) {
   const downloadPromise = new Promise(function(resolve, reject) {
     const destination = `${config.paths.downloads}/${imageItem.id}.jpg`;
-    const width =  (config.orientation === 'h') ? 2000 : 10;
-    const height =  (config.orientation === 'h') ? 10 : 2000;
+    let width;
+    let height;
+
+    if(config.fit === 'fill'){
+      width =  (config.orientation === 'h') ? 2000 : 10;
+      height =  (config.orientation === 'h') ? 10 : 2000;
+    } else {
+      width =  (config.orientation === 'h') ? config.width : config.span;
+      height =  (config.orientation === 'h') ? config.span : config.height;
+    }
+
     const resizeTransform = sharp().resize(width, height , { fit: config.fit });
 
     https.get(imageItem.path, downloadStream => {
@@ -132,14 +141,18 @@ function createStitchedImage(config, imageIDs){
       renderGm.tile(`1x${imageIDs.length}`);
     }
 
-    renderGm.geometry('+0+0')
-      .resize(config.width, config.height, "!")
-      .write(config.paths.output, function (err) {
-          if (err){
-            throw err;
-          };
-          resolve();
-      });
+    if(config.fit === 'fill'){
+      renderGm.geometry('+0+0').resize(config.width, config.height, "!");
+    } else {
+      renderGm.geometry('+0+0');
+    }
+
+    renderGm.write(config.paths.output, function (err) {
+        if (err){
+          throw err;
+        };
+        resolve();
+    });
   });
 }
 
