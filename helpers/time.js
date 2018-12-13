@@ -46,11 +46,11 @@ function msDuration(period, increment){
 }
 
 function getDateToQueryTime(date){
-  return new Date(date).toISOString().split('.')[0] + "Z";
+  return `${date}T00:00:00Z`;
 }
 
 function getDateTimeToQueryTime(date, time){
-  return new Date(`${date} ${time}`).toISOString().split('.')[0] + "Z";
+  return `${date}T${time}Z`;
 }
 
 module.exports = {
