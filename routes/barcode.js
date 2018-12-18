@@ -7,6 +7,37 @@ const valid = require('../helpers/validation');
 const article = require('../modules/Article');
 const barcode = require('../modules/Barcode');
 
+// barf on startup if these folders are not specified in env or set up
+const ORIENTATIONS  = ['v', 'h'];
+const FITS          = ['cover', 'fill'];
+const FOLDER_PARAMS = ['DOWNLOAD_FOLDER', 'RESULT_FOLDER'];
+
+try{
+  FOLDER_PARAMS.forEach( param => {
+    const val = process.env[param];
+    if (val === undefined) {
+      throw new Error(`${param} not specified in env`);
+    }
+
+    if (!fs.existsSync(val)) {
+      throw new Error(`${param}, ${val}, not found`);
+    }
+
+  });
+
+  ORIENTATIONS.forEach( orientation => {
+    FITS.forEach( fit => {
+      const path = `${process.env.DOWNLOAD_FOLDER}/${fit}-${orientation}`;
+
+      if (!fs.existsSync(path)) {
+        throw new Error(`DOWNLOAD sub FOLDER, ${path}, not found`);
+      }
+    })
+  });
+} catch (err) {
+  throw new Error(`startup, pre-router: ${err}`);
+}
+
 router.get('/', async (req, res, next) => {
   const width = (req.query.width) ? req.query.width : 1024;
   const height = (req.query.height) ? req.query.height : 768;
@@ -30,8 +61,8 @@ router.get('/', async (req, res, next) => {
     {name: ['dateFrom', 'dateTo'], value: [dateFrom, dateTo], type: 'dateRangeLimit', limit: 5},
     {name: 'timeFrom', value: timeFrom, type: 'time'},
     {name: 'timeTo', value: timeTo, type: 'time'},
-    {name: 'Orientation', value: orientation, type: 'alpha', selection: ['v', 'h']},
-    {name: 'Fit', value: fit, type: 'alpha', selection: ['cover', 'fill']},
+    {name: 'Orientation', value: orientation, type: 'alpha', selection: ORIENTATIONS},
+    {name: 'Fit', value: fit, type: 'alpha', selection: FITS},
     {name: 'Share', value: share, type: '', selection: ['', 'twitter']},
   ]);
 
@@ -53,14 +84,6 @@ router.get('/', async (req, res, next) => {
       result: `${process.env.RESULT_FOLDER}`,
       output: finalFilepath
     };
-
-    if (!fs.existsSync(paths.downloads) || !fs.existsSync(paths.result)) {
-      return res.json({ error: `Download ${fit} folder not found` });
-    }
-
-    if(path.isAbsolute(paths.downloads) || path.isAbsolute(paths.result)) {
-      return res.json({ error: "Download folders need to be relative paths" });
-    }
 
     const allImageIds = await article.getImageIdsFromDateRange(dateFrom, dateTo, timeFrom, timeTo);
 
@@ -106,7 +129,7 @@ router.get('/', async (req, res, next) => {
           .catch((err) => {
             return res.json({ error: `finalImage: ${err}` });
           });
-          
+
       })
       .catch((err) => {
         return res.json({
@@ -117,7 +140,7 @@ router.get('/', async (req, res, next) => {
 	} catch (err) {
     return res.json({ error: `router: ${err}` });
   }
-  
+
 });
 
 function getUncachedImages(imageIds, fit, fitImageList){

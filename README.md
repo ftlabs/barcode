@@ -14,11 +14,11 @@ CAPI_KEY= # you can request this via the FT developer portal
 TOKEN= # for authorised access without S3O or IP range. This can be set to a noddy value for development.
 PORT= # auto set in Heroku, but needs specifying for development.
 TWITTER_CONSUMER_KEY= # you can get the twitter keys by creating a twitter app (with a twitter dev account)
-TWITTER_CONSUMER_SECRET= # 
-TWITTER_ACCESS_TOKEN_KEY= # 
-TWITTER_ACCESS_TOKEN_SECRET= # 
-DOWNLOAD_PATH= # path to folder allowing image downloads
-RESULT_FOLDER= # path to folder for final combined image storage
+TWITTER_CONSUMER_SECRET= #
+TWITTER_ACCESS_TOKEN_KEY= #
+TWITTER_ACCESS_TOKEN_SECRET= #
+DOWNLOAD_FOLDER=downloads # path to folder allowing image downloads
+RESULT_FOLDER=downloads/results # path to folder for final combined image storage
 ```
 
 Install nodemon globally by running `npm install -g nodemon`.
@@ -43,13 +43,13 @@ To get GraphicsMagick working on Heroku you need to add some buildpacks, make su
 $ npm test
 ```
 
-## Documentation 
+## Documentation
 
 ### What does it do?
 
 The prototype queries SAPI for all the articles in a requested date span.
 The main images of each article found are downloaded, squashed (width or height wise) and then combined into one image.
-The created image is then posted to Twitter. 
+The created image is then posted to Twitter.
 
 ### How does that look?
 
@@ -68,7 +68,7 @@ The created image is then posted to Twitter.
 
 ### How can I use it?
 
-You can run it locally by using ```nodemon index.js``` 
+You can run it locally by using ```nodemon index.js```
 
 The base request is:
 ```
@@ -77,7 +77,7 @@ http://localhost:8000/barcode
 
 You can also optionally pass the following parameters:
 
-+ **width** - width of returned image - *default 1024* 
++ **width** - width of returned image - *default 1024*
 + **height** - height of returned image - *default 768*
 + **dateFrom** - date to start image selection from - *default 2018-11-15*
 + **dateTo** - date to end image selection on - *default 2018-11-16*
@@ -115,4 +115,3 @@ A list of some interesting expansions for the project:
 + Allow searching for date AND time ranges
 + Use Rekognition to identify images of a given person and return a barcode of that person (or even a mosaic?)
 + Add the option to search by theme, person, genre
-
