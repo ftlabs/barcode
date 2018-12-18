@@ -83,13 +83,15 @@ function getImagePromises(config, paths) {
 
 function getDownloadPromise(config, imageItem) {
   const downloadPromise = new Promise(function(resolve, reject) {
+    const minFillDimension = 10;
+    const maxFillDimension = 2000;
     const destination = `${config.paths.downloads}/${imageItem.id}.jpg`;
     let width;
     let height;
 
     if(config.fit === 'fill'){
-      width =  (config.orientation === 'h') ? 2000 : 10;
-      height =  (config.orientation === 'h') ? 10 : 2000;
+      width =  (config.orientation === 'h') ? maxFillDimension : minFillDimension;
+      height =  (config.orientation === 'h') ? minFillDimension : maxFillDimension;
     } else {
       width =  (config.orientation === 'h') ? config.width : config.span;
       height =  (config.orientation === 'h') ? config.span : config.height;
