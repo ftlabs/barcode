@@ -104,3 +104,15 @@ You can also optionally pass the following parameters:
 + The new image is then saved to a local folder
 + **[If twitter share was requested]** The image is then uploaded as a Media item to Twitter using the Twitter API. The Twitter API also creates a new tweet using that media item.
 + Once this process is complete the image is returned to the users browser
+
+
+## Feature creep
+
+A list of some interesting expansions for the project:
+
++ Sort by (pixel) colour
++ On startup check for any existing images and add paths to cache
++ Allow searching for date AND time ranges
++ Use Rekognition to identify images of a given person and return a barcode of that person (or even a mosaic?)
++ Add the option to search by theme, person, genre
+
