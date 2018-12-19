@@ -4,6 +4,7 @@ const graphicsmagick = require("gm");
 const filesystem = require("fs");
 const twitter = require('twitter');
 const crypto = require('crypto');
+const getPixels = require("get-pixels")
 
 function createHash(...items){
   return crypto.createHash('md5').update(items.toString()).digest("hex");
