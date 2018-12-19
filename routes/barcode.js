@@ -10,6 +10,7 @@ const barcode = require('../modules/Barcode');
 // barf on startup if these folders are not specified in env or set up
 const ORIENTATIONS  = ['v', 'h'];
 const FITS          = ['cover', 'fill'];
+const SORTS         = ['published', 'colour'];
 const FOLDER_PARAMS = ['DOWNLOAD_FOLDER', 'RESULT_FOLDER'];
 
 try{
@@ -34,6 +35,10 @@ try{
       }
     })
   });
+
+  if (!fs.existsSync(`${process.env.DOWNLOAD_FOLDER}/colour`)) {
+    throw new Error(`${param}, colour, not found`);
+  }
 } catch (err) {
   throw new Error(`startup, pre-router: ${err}`);
 }
@@ -47,6 +52,7 @@ router.get('/', async (req, res, next) => {
   const timeTo = (req.query.timeTo) ? req.query.timeTo : '00:00:00';
   const orientation = (req.query.orientation) ? req.query.orientation : 'h';
   const fit = (req.query.fit) ? req.query.fit : 'fill';
+  const sort = (req.query.sort) ? req.query.sort : 'published';
   const share = (req.query.share) ? req.query.share : '';
 
   const validation = valid.validateVars([
@@ -63,6 +69,7 @@ router.get('/', async (req, res, next) => {
     {name: 'timeTo', value: timeTo, type: 'time'},
     {name: 'Orientation', value: orientation, type: 'alpha', selection: ORIENTATIONS},
     {name: 'Fit', value: fit, type: 'alpha', selection: FITS},
+    {name: 'Sort', value: sort, type: 'alpha', selection: SORTS},
     {name: 'Share', value: share, type: '', selection: ['', 'twitter']},
   ]);
 
@@ -71,7 +78,7 @@ router.get('/', async (req, res, next) => {
   }
 
   try {
-    const hash = barcode.createHash(width, height, dateFrom, dateTo, timeFrom, timeTo, orientation, fit, share);
+    const hash = barcode.createHash(width, height, dateFrom, dateTo, timeFrom, timeTo, orientation, fit, sort, share);
     const finalFilepath = `${process.env.RESULT_FOLDER}/output_${hash}.jpg`;
 
     if(cache.get(hash)){
