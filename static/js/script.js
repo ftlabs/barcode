@@ -7,9 +7,10 @@ var dateTo = document.getElementById('dateTo');
 var timeTo = document.getElementById('timeTo');
 var orientation = document.getElementById('orientation');
 var fit = document.getElementById('fit');
+var sort = document.getElementById('sort');
 
 function init(){
-  if(width !== undefined && height !== undefined && dateFrom !== undefined && timeFrom !== undefined && dateTo !== undefined && timeTo !== undefined && orientation !== undefined && fit !== undefined){
+  if(width !== undefined && height !== undefined && dateFrom !== undefined && timeFrom !== undefined && dateTo !== undefined && timeTo !== undefined && orientation !== undefined && fit !== undefined && sort !== undefined){
     width.addEventListener('change', updateUrlBuilderLink, false);
     height.addEventListener('change', updateUrlBuilderLink, false);
     dateFrom.addEventListener('change', updateUrlBuilderLink, false);
@@ -18,6 +19,7 @@ function init(){
     timeTo.addEventListener('change', updateUrlBuilderLink, false);
     orientation.addEventListener('change', updateUrlBuilderLink, false);
     fit.addEventListener('change', updateUrlBuilderLink, false);
+    sort.addEventListener('change', updateUrlBuilderLink, false);
     updateUrlBuilderLink();
   }
 }
@@ -31,8 +33,9 @@ function updateUrlBuilderLink(){
   var timeToVal = timeTo.value + ':00';
   var orientationVal = orientation.options[orientation.selectedIndex].value;
   var fitVal = fit.options[fit.selectedIndex].value;
+  var sortVal = sort.options[sort.selectedIndex].value;
 
-  var str = '/barcode?width=' + widthVal + '&height=' + heightVal + '&dateFrom=' + dateFromVal + '&timeFrom=' + timeFromVal  + '&dateTo=' + dateToVal + '&timeTo=' + timeToVal + '&orientation=' + orientationVal + '&fit=' + fitVal;
+  var str = '/barcode?width=' + widthVal + '&height=' + heightVal + '&dateFrom=' + dateFromVal + '&timeFrom=' + timeFromVal  + '&dateTo=' + dateToVal + '&timeTo=' + timeToVal + '&orientation=' + orientationVal + '&fit=' + fitVal + '&sort=' + sortVal;
 
   queryLink.href = str;
   queryLink.innerHTML = str;

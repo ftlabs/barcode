@@ -33,6 +33,11 @@
         <option value="cover" selected>cover</option>
         <option value="fill">fill</option>
       </select>
+      <span>&amp;sort=</span>
+      <select id="sort" name="sort">
+        <option value="published" selected>published</option>
+        <option value="colour">colour</option>
+      </select>
       <br />
       <a id="queryBuilderLink" target="_blank" href="">/barcode</a>
       <p>
@@ -71,9 +76,12 @@
       <li>
         <b>fit</b> <i>string</i> : gets images as masks or squashed - <i>(fill default)</i>
       </li>
+      <li>
+        <b>sort</b> <i>string</i> : sorts image display order but colour or published date - <i>(published default)</i>
+      </li>
     </ul>
     <p>
-      e.g. <a target="_blank" href="/barcode?width=1024&height=768&dateFrom=2018-11-13&timeFrom=00:00:00&dateTo=2018-11-14&timeTo=00:00:00&orientation=v&fit=fill">/barcode?width=1024&amp;height=768&amp;dateFrom=2018-11-13&amp;timeFrom=00:00:00&amp;dateTo=2018-11-14&amp;timeTo=00:00:00&amp;orientation=v&amp;fit=fill</a>
+      e.g. <a target="_blank" href="/barcode?width=1024&height=768&dateFrom=2018-11-13&timeFrom=00:00:00&dateTo=2018-11-14&timeTo=00:00:00&orientation=v&fit=fill&sort=published">/barcode?width=1024&amp;height=768&amp;dateFrom=2018-11-13&amp;timeFrom=00:00:00&amp;dateTo=2018-11-14&amp;timeTo=00:00:00&amp;orientation=v&amp;fit=fill&amp;sort=published</a>
     </p>
     <script src="/static/js/script.js"></script>
   </body>
