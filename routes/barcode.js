@@ -7,14 +7,48 @@ const valid = require('../helpers/validation');
 const article = require('../modules/Article');
 const barcode = require('../modules/Barcode');
 
+// barf on startup if these folders are not specified in env or set up
+const ORIENTATIONS  = ['v', 'h'];
+const FITS          = ['cover', 'fill'];
+const FOLDER_PARAMS = ['DOWNLOAD_FOLDER', 'RESULT_FOLDER'];
+
+try{
+  FOLDER_PARAMS.forEach( param => {
+    const val = process.env[param];
+    if (val === undefined) {
+      throw new Error(`${param} not specified in env`);
+    }
+
+    if (!fs.existsSync(val)) {
+      throw new Error(`${param}, ${val}, not found`);
+    }
+
+  });
+
+  ORIENTATIONS.forEach( orientation => {
+    FITS.forEach( fit => {
+      const path = `${process.env.DOWNLOAD_FOLDER}/${fit}-${orientation}`;
+
+      if (!fs.existsSync(path)) {
+        throw new Error(`DOWNLOAD sub FOLDER, ${path}, not found`);
+      }
+    })
+  });
+} catch (err) {
+  throw new Error(`startup, pre-router: ${err}`);
+}
+
 router.get('/', async (req, res, next) => {
   const width = (req.query.width) ? req.query.width : 1024;
   const height = (req.query.height) ? req.query.height : 768;
   const dateFrom = (req.query.dateFrom) ? req.query.dateFrom : '2018-11-15';
   const dateTo = (req.query.dateTo) ? req.query.dateTo : '2018-11-16';
+  const timeFrom = (req.query.timeFrom) ? req.query.timeFrom : '00:00:00';
+  const timeTo = (req.query.timeTo) ? req.query.timeTo : '00:00:00';
   const orientation = (req.query.orientation) ? req.query.orientation : 'h';
   const fit = (req.query.fit) ? req.query.fit : 'fill';
   const share = (req.query.share) ? req.query.share : '';
+
   const validation = valid.validateVars([
     {name: 'Width', value: width, type: 'dimensions'},
     {name: 'Height', value: height, type: 'dimensions'},
@@ -25,8 +59,10 @@ router.get('/', async (req, res, next) => {
     {name: ['dateFrom', 'dateTo'], value: [dateFrom, dateTo], type: 'lessThan'},
     {name: ['dateFrom', 'dateTo'], value: [dateFrom, dateTo], type: 'notMatching'},
     {name: ['dateFrom', 'dateTo'], value: [dateFrom, dateTo], type: 'dateRangeLimit', limit: 5},
-    {name: 'Orientation', value: orientation, type: 'alpha', selection: ['v', 'h']},
-    {name: 'Fit', value: fit, type: 'alpha', selection: ['cover', 'fill']},
+    {name: 'timeFrom', value: timeFrom, type: 'time'},
+    {name: 'timeTo', value: timeTo, type: 'time'},
+    {name: 'Orientation', value: orientation, type: 'alpha', selection: ORIENTATIONS},
+    {name: 'Fit', value: fit, type: 'alpha', selection: FITS},
     {name: 'Share', value: share, type: '', selection: ['', 'twitter']},
   ]);
 
@@ -35,7 +71,7 @@ router.get('/', async (req, res, next) => {
   }
 
   try {
-    const hash = barcode.createHash(width, height, dateFrom, dateTo, orientation, fit, share);
+    const hash = barcode.createHash(width, height, dateFrom, dateTo, timeFrom, timeTo, orientation, fit, share);
     const finalFilepath = `${process.env.RESULT_FOLDER}/output_${hash}.jpg`;
 
     if(cache.get(hash)){
@@ -49,15 +85,7 @@ router.get('/', async (req, res, next) => {
       output: finalFilepath
     };
 
-    if (!fs.existsSync(paths.downloads) || !fs.existsSync(paths.result)) {
-      return res.json({ error: `Download ${fit} folder not found` });
-    }
-
-    if(path.isAbsolute(paths.downloads) || path.isAbsolute(paths.result)) {
-      return res.json({ error: "Download folders need to be relative paths" });
-    }
-
-    const allImageIds = await article.getImageIdsFromDateRange(dateFrom, dateTo);
+    const allImageIds = await article.getImageIdsFromDateRange(dateFrom, dateTo, timeFrom, timeTo);
 
     if(allImageIds.length <= 0){
       return res.json({ error: `No images found with the search parameters, please adjust your date range and try again` });
@@ -101,7 +129,7 @@ router.get('/', async (req, res, next) => {
           .catch((err) => {
             return res.json({ error: `finalImage: ${err}` });
           });
-          
+
       })
       .catch((err) => {
         return res.json({
@@ -112,7 +140,7 @@ router.get('/', async (req, res, next) => {
 	} catch (err) {
     return res.json({ error: `router: ${err}` });
   }
-  
+
 });
 
 function getUncachedImages(imageIds, fit, fitImageList){

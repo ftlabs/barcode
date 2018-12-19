@@ -45,11 +45,11 @@ function msDuration(period, increment){
 	return ms;
 }
 
-function getDateToQueryTime(date){
-  return new Date(date).toISOString().split('.')[0] + "Z";
+function getDateTimeToQueryTime(date, time = '00:00:00'){
+  return `${date}T${time}Z`;
 }
 
 module.exports = {
   getDatetimeRange,
-  getDateToQueryTime
+  getDateTimeToQueryTime
 };

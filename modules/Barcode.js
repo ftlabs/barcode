@@ -83,9 +83,20 @@ function getImagePromises(config, paths) {
 
 function getDownloadPromise(config, imageItem) {
   const downloadPromise = new Promise(function(resolve, reject) {
+    const minFillDimension = 10;
+    const maxFillDimension = 2000;
     const destination = `${config.paths.downloads}/${imageItem.id}.jpg`;
-    const width =  (config.orientation === 'h') ? config.width : config.span;
-    const height =  (config.orientation === 'h') ? config.span : config.height;
+    let width;
+    let height;
+
+    if(config.fit === 'fill'){
+      width =  (config.orientation === 'h') ? maxFillDimension : minFillDimension;
+      height =  (config.orientation === 'h') ? minFillDimension : maxFillDimension;
+    } else {
+      width =  (config.orientation === 'h') ? config.width : config.span;
+      height =  (config.orientation === 'h') ? config.span : config.height;
+    }
+
     const resizeTransform = sharp().resize(width, height , { fit: config.fit });
 
     https.get(imageItem.path, downloadStream => {
@@ -122,27 +133,28 @@ function createStitchedImage(config, imageIDs){
   return new Promise(function(resolve) {
     const renderGm = graphicsmagick();
 
-    let i = 0;
     imageIDs.forEach(image => {
-      const pos = (i * config.span);
-
-      if(config.orientation === 'h'){
-        renderGm.in('-page', `+0+${pos}`)
-          .in(`${config.paths.downloads}/${image}.jpg`);
-      } else {
-        renderGm.in('-page', `+${pos}+0`)
-          .in(`${config.paths.downloads}/${image}.jpg`);
-      }
-      i++;
+      renderGm.montage(`${config.paths.downloads}/${image}.jpg`);
     });
 
-    renderGm.mosaic()
-      .write(config.paths.output, function (err) {
-          if (err){
-            throw err;
-          };
-          resolve();
-      });
+    if(config.orientation === 'v'){
+      renderGm.tile(`${imageIDs.length}x1`);
+    } else {
+      renderGm.tile(`1x${imageIDs.length}`);
+    }
+
+    if(config.fit === 'fill'){
+      renderGm.geometry('+0+0').resize(config.width, config.height, "!");
+    } else {
+      renderGm.geometry('+0+0');
+    }
+
+    renderGm.write(config.paths.output, function (err) {
+        if (err){
+          throw err;
+        };
+        resolve();
+    });
   });
 }
 
