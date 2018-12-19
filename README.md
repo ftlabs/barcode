@@ -111,7 +111,8 @@ You can also optionally pass the following parameters:
 A list of some interesting expansions for the project:
 
 + Sort by (pixel) colour
-+ On startup check for any existing images and add paths to cache
-+ Allow searching for date AND time ranges
-+ Use Rekognition to identify images of a given person and return a barcode of that person (or even a mosaic?)
++ ~Allow searching for date AND time ranges~
 + Add the option to search by theme, person, genre
++ On startup check for any existing images and add paths to cache
++ Use Rekognition to identify images of a given person and return a barcode of that person (or even a mosaic?)
+
