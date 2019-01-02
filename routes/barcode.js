@@ -86,8 +86,10 @@ router.get('/', async (req, res, next) => {
       return res.end(fs.readFileSync(finalFilepath), 'binary');
     }
 
+    const imageFolder = (sort === 'colour') ? 'colour' : `${fit}-${orientation}`;
+
     const paths = {
-      downloads: `${process.env.DOWNLOAD_FOLDER}/${fit}-${orientation}`,
+      downloads: `${process.env.DOWNLOAD_FOLDER}/${imageFolder}`,
       result: `${process.env.RESULT_FOLDER}`,
       output: finalFilepath
     };
@@ -98,8 +100,7 @@ router.get('/', async (req, res, next) => {
       return res.json({ error: `No images found with the search parameters, please adjust your date range and try again` });
     }
 
-    const config = barcode.createConfig(orientation, fit, allImageIds.length, width, height, paths);
-    const imageFolder = `${fit}-${orientation}`;
+    const config = barcode.createConfig(orientation, fit, allImageIds.length, width, height, paths, sort);
 
     const uncachedImages = getUncachedImages(allImageIds, fit, cache.get(imageFolder));
     const uncachedImagePaths = barcode.createImagePaths(config, uncachedImages);
