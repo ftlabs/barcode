@@ -102,6 +102,8 @@ router.get('/', async (req, res, next) => {
 
     const config = barcode.createConfig(orientation, fit, allImageIds.length, width, height, paths, sort);
 
+    //TODO - if colour is active add additional iamge requests for 1x1 pixel images
+
     const uncachedImages = getUncachedImages(allImageIds, fit, cache.get(imageFolder));
     const uncachedImagePaths = barcode.createImagePaths(config, uncachedImages);
     const uncachedImagePromises = barcode.getImagePromises(config, uncachedImagePaths);

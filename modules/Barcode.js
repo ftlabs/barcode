@@ -6,7 +6,8 @@ const twitter = require('twitter');
 const crypto = require('crypto');
 const rgbHex = require('rgb-hex');
 const hexSorter = require('hexSorter');
-const vibrant = require('node-vibrant')
+const colorSort = require('color-sort');
+const average = require('image-average-color');
 
 function createHash(...items){
   return crypto.createHash('md5').update(items.toString()).digest("hex");
@@ -146,81 +147,79 @@ function getDownloadPromise(config, imageItem) {
 }
 
 function createStitchedImage(config, imageIDs){
-  return new Promise(function(resolve) {
+  return new Promise(async function(resolve) {
     const renderGm = graphicsmagick();
 
-    let rgbpromises = []
-    
+    if(config.sort === 'colour'){
+      imageIDs = await colourSortIDs(config, imageIDs);
+    }
+
     imageIDs.forEach(image => {
-      var promise = vibrant.from(`${config.paths.downloads}/${image}.jpg`).getPalette()
-        .then((palette) => {
-          let rgb = [0,0,0];
-
-          if(palette.hasOwnProperty('Vibrant') && palette.Vibrant != null){
-            rgb = palette.Vibrant.getRgb();
-          } else if(palette.hasOwnProperty('Muted') && palette.Muted != null)  {
-            rgb = palette.Muted.getRgb();
-          }
-
-          return {
-            id: image,
-            palette: palette,
-            rgb: rgb,
-            hex: rgbHex(Math.round(rgb[0]), Math.round(rgb[1]), Math.round(rgb[2])),
-            sort: 0
-          }
-        });
-      
-      rgbpromises.push(promise);
+      renderGm.montage(`${config.paths.downloads}/${image}.jpg`);
     });
 
-    Promise.all(rgbpromises)
-      .then(values => sortByHex(values))
-      .then(sortedValues => {
+    if(config.orientation === 'v'){
+      renderGm.tile(`${imageIDs.length}x1`);
+    } else {
+      renderGm.tile(`1x${imageIDs.length}`);
+    }
 
-        sortedValues.forEach(image => {
-          renderGm.montage(`${config.paths.downloads}/${image}.jpg`);
-        });
-    
-        if(config.orientation === 'v'){
-          renderGm.tile(`${imageIDs.length}x1`);
-        } else {
-          renderGm.tile(`1x${imageIDs.length}`);
-        }
-    
-        if(config.fit === 'fill'){
-          renderGm.geometry('+0+0').resize(config.width, config.height, "!");
-        } else {
-          renderGm.geometry('+0+0');
-        }
-    
-        renderGm.write(config.paths.output, function (err) {
-            if (err){
-              throw err;
-            };
-            resolve();
-        });
-      })
-      .catch(function(err){
-        console.log(err);
-      });
-    
+    if(config.fit === 'fill'){
+      renderGm.geometry('+0+0').resize(config.width, config.height, "!");
+    } else {
+      renderGm.geometry('+0+0');
+    }
+
+    renderGm.write(config.paths.output, function (err) {
+        if (err){
+          throw err;
+        };
+        resolve();
+    });
   });
 }
 
-function sortByHex(imageData){
-  let justHexes = imageData.map(item => {
-    if(item){
-      return `#${item.hex}`;
-    }
+async function colourSortIDs(config, imageIDs){
+  let returnedImageIDs = ['dfsf'];
+  let colourPromises = [];
+    
+  imageIDs.forEach(image => {
+
+    const colourPromise = new Promise(function(resolve){
+      average(`${config.paths.downloads}/${image}.jpg`, (err, color) => {
+        if (err) throw err;
+        var [red, green, blue] = color;
+        resolve({
+          id: image,
+          hex: `#${rgbHex(red, green, blue)}`
+        });
+      });
+    });
+
+    colourPromises.push(colourPromise);
   });
 
-  let sortedArray = sortHexes(justHexes);
+  await Promise.all(colourPromises)
+    .then(values => sortByHex(values))
+    .then(values => {
+      returnedImageIDs = values;
+      return values;
+    })
+    .catch(function(err){
+      console.log(err);
+    });
+
+  return returnedImageIDs;
+}
+
+function sortByHex(imageData){
+  let justHexes = imageData.map(item => item.hex);
+  let sortedArray = colorSort(justHexes);
 
   let sortedImageIds = [];
   sortedArray.forEach(hex => {
     imageData.forEach((image, index) => {
-      if(image != null && `#${image.hex}` === hex){
+      if(image != null && image.hex === hex){
         sortedImageIds.push(image.id);
         imageData[index] = null;
       }
@@ -234,7 +233,7 @@ function sortHexes(input) {
   let color;
   let sortedArray = [];
   for (let i = input.length - 1; i >= 0; i--) {
-    color = hexSorter.mostSaturatedColor(input);
+    color = hexSorter.mostBrightColor(input);
     input.splice(input.indexOf(color), 1);
     sortedArray.push(color);
   }
