@@ -4,7 +4,6 @@ const graphicsmagick = require("gm");
 const filesystem = require("fs");
 const twitter = require('twitter');
 const crypto = require('crypto');
-const getPixels = require('get-pixels');
 const rgbHex = require('rgb-hex');
 const hexSorter = require('hexSorter');
 const vibrant = require('node-vibrant')
