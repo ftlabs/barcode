@@ -34,22 +34,19 @@ function createConfig(orientation, fit, num, width, height, paths, sort){
 }
 
 function createImagePaths(config, images){
+  const fit = (config.fit === 'solid') ? 'fill' : config.fit;
   let width = 0;
   let height = 0;
-  let fit = "";
 
   if(config.fit === 'solid'){
     width = 1;
     height = 1;
-    fit = 'fill';
   } else if(config.fit === 'fill'){
     width = 10;
     height = 10;
-    fit = 'fill';
   } else if(config.fit === 'cover'){
     width = config.width;
     height = config.height;
-    fit = 'cover';
   }
 
   return images.map(id => {
@@ -98,7 +95,7 @@ function getDownloadPromise(config, imageItem) {
     const minFillDimension = 10;
     const maxFillDimension = 2000;
     const destination = `${config.paths.downloads}/${imageItem.id}.jpg`;
-    let fit = (config.fit === 'solid') ? 'fill' : config.fit;
+    const fit = (config.fit === 'solid') ? 'fill' : config.fit;
     let width;
     let height;
 
