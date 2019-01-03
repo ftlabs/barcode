@@ -53,23 +53,21 @@ The created image is then posted to Twitter.
 
 ### How does that look?
 
-![Alt text](./docs/readme/vertical_fill.png?raw=true "Example Vertical line image with fill parameter")
-*Images from 13th Nov - 14th Nov 2018 using vertical & fill parameters*
+#### Vertical 
 
-![Alt text](./docs/readme/vertical_cover.png?raw=true "Example Vertical line image with cover parameter")
-*Images from 13th Nov - 14th Nov 2018 using vertical & cover parameters*
+| Fill | Cover | Solid |
+|---|---|---|
+| ![Alt text](./docs/readme/vertical_fill.png?raw=true "Example Vertical line image with fill parameter") | ![Alt text](./docs/readme/vertical_cover.png?raw=true "Example Vertical line image with cover parameter") | ![Alt text](./docs/readme/vertical_colour_sort.png?raw=true "Example Vertical solid image with colour sorting") | 
 
-![Alt text](./docs/readme/vertical_colour_sort.png?raw=true "Example Vertical colour image with colour sorting")
-*Images from 13th Nov - 14th Nov 2018 using vertical & colour parameters*
+*Images from 13th Nov - 14th Nov 2018*
 
-![Alt text](./docs/readme/horizontal_fill.png?raw=true "Example Horizontal line image with fill parameter")
-*Images from 13th Nov - 14th Nov 2018 using horizontal & fill parameters*
+#### Horizontal
 
-![Alt text](./docs/readme/horizontal_cover.png?raw=true "Example Horizontal line image with cover parameter")
-*Images from 13th Nov - 14th Nov 2018 using horizontal & cover parameters*
+| Fill | Cover | Solid |
+|---|---|---|
+| ![Alt text](./docs/readme/horizontal_fill.png?raw=true "Example Horizontal line image with fill parameter") | ![Alt text](./docs/readme/horizontal_cover.png?raw=true "Example Horizontal line image with cover parameter") | ![Alt text](./docs/readme/horizontal_colour_sort.png?raw=true "Example Horizontal solid image with colour sorting") | 
 
-![Alt text](./docs/readme/horizontal_colour_sort.png?raw=true "Example Horizontal colour image with colour sorting")
-*Images from 13th Nov - 14th Nov 2018 using horizontal & colour parameters*
+*Images from 13th Nov - 14th Nov 2018*
 
 
 ### How can I use it?
@@ -105,9 +103,9 @@ You can also optionally pass the following parameters:
 + A user enters the request URL into a browser address bar
 + A **SAPI** request is made for all articles & blogs published within the queried time range. The request only asks for the images aspect and no facets. A JSON of all matching articles are sent back.
 + The JSON is then filtered to get an array of all the images (one per article), stripping out any other parameters or articles that don't have a headline image.
-+ The image URL's are then updated to request the sliced and/or compressed versions
-+ Each image is then downloaded to a local folder
-+ GraphicsMagick then creates a new image by stitching together the downloaded images (in original published order)
++ The image URL's are then updated to request the sliced, solid or compressed versions
++ Images that are missing from the in-memory cache (and therefore are already downloaded) will be request from Origami and saved to a local folder
++ GraphicsMagick then creates a new image by stitching together the downloaded images (in the order requested, colour or published)
 + The new image is then saved to a local folder
 + **[If twitter share was requested]** The image is then uploaded as a Media item to Twitter using the Twitter API. The Twitter API also creates a new tweet using that media item.
 + Once this process is complete the image is returned to the users browser
@@ -130,12 +128,22 @@ A list of some interesting expansions for the project:
 
 **WIP**
 
-How to make the creation of images faster
-
-- file name caching
-- less file read and writes
+Running Barcode locally generates images in a second or two. Unfortuantly once deployed to Heroku the image creation was about 8 - 15 seconds with the occasion timeout. Not good.
 
 
+https://github.com/railsagainstignorance
+
+I wasnt sure what was casuing the slow down, was it the image downloads or the barcode image generation? So I added some console.log timing tracking and found the three longest performing functions:
+
+- Image request and downloads
+- Resizing images
+- Generation of final image
+
+I went on the hunt for some better libraries and functions that were faster/better performing than the ones I was using. [railsagainstignorance](https://github.com/railsagainstignorance) also suggested caching the images rather than redownloading on each request.
+
+**Fix:** Found some fast/performant/lightweight libraries to replace the ones I was already using. Also images are saved with their FT image ID's to identify if the image is already downloaded, so no need to download it again.
+
+---
 
 ### Extract pixel colour from an image? Easy...right?
 
@@ -146,15 +154,23 @@ However I couldn't work out how to interperet the raw image data, during the fil
 
 **Fix:** Currently using the npm package [`image-average-color`](https://www.npmjs.com/package/image-average-color) to get colour from an image
 
+---
 
 ### Sort by colour? Easy...right?
 
 Once the RGB/Hex colours for each image have been found they need to be sorted into some kind of colour/saturation/brightness order. 
 
-**WIP**
+I tried to add the RGB values together and sort the images like that but the sorting didn't look right.
 
-**Fix:** *Currently working on a set of new filters for colour sorting options*
+I also looked for some libraries to help out but none had the ability to sort an array of id'd RGB or Hex values, only a flat array of values.
 
+In the end I had to extract the values for each image, sort those values seperate from the id's and then sort the id array based on the sorting of the colour sorted array.
+
+**Fix:** In the end I had to extract the values for each image, sort those values seperate from the id's and then sort the id array based on the sorting of the colour sorted array.
+
+Currently using [`color-sort` package](https://www.npmjs.com/package/color-sort) to sort the hex colours of each image. There may be room here to add different sorting filters & libraries to diversify the sorting options for users 
+
+---
 
 ### Additional white bars appearing in images
 
@@ -162,8 +178,10 @@ Once the RGB/Hex colours for each image have been found they need to be sorted i
 
 While working on the colour sorting feature we found that some images were getting additional whitebars on the top and bottom of the image, even though the downloaded image did not have them.
 
-After some super detective work (thanks Lily), it was discovered that affected downloaded images had an additional resolution parameter that the others did not. This was because they were png's while the other iamges were jpgs.
+After some super detective work (thanks [Lily2point0](https://github.com/Lily2point0)), it was discovered that affected downloaded images had an additional resolution parameter that the others did not. This was because they were png's while the other iamges were jpgs.
 
 **Fix:** Added `&format=jpg` to the Origami image request
 
 ![Alt text](./docs/lessons_learned/additional_whitebars_fixed.png?raw=true "Example barcode image with additional white bars removed")
+
+---
