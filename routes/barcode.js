@@ -1,5 +1,4 @@
 const express = require('express');
-const path = require('path');
 const fs = require('fs');
 const router = express.Router();
 const cache = require('../helpers/cache');
@@ -9,7 +8,8 @@ const barcode = require('../modules/Barcode');
 
 // barf on startup if these folders are not specified in env or set up
 const ORIENTATIONS  = ['v', 'h'];
-const FITS          = ['cover', 'fill'];
+const FITS          = ['cover', 'fill', 'solid'];
+const SORTS         = ['published', 'colour'];
 const FOLDER_PARAMS = ['DOWNLOAD_FOLDER', 'RESULT_FOLDER'];
 
 try{
@@ -22,7 +22,6 @@ try{
     if (!fs.existsSync(val)) {
       throw new Error(`${param}, ${val}, not found`);
     }
-
   });
 
   ORIENTATIONS.forEach( orientation => {
@@ -38,7 +37,7 @@ try{
   throw new Error(`startup, pre-router: ${err}`);
 }
 
-router.get('/', async (req, res, next) => {
+router.get('/', async (req, res) => {
   const width = (req.query.width) ? req.query.width : 1024;
   const height = (req.query.height) ? req.query.height : 768;
   const dateFrom = (req.query.dateFrom) ? req.query.dateFrom : '2018-11-15';
@@ -47,6 +46,7 @@ router.get('/', async (req, res, next) => {
   const timeTo = (req.query.timeTo) ? req.query.timeTo : '00:00:00';
   const orientation = (req.query.orientation) ? req.query.orientation : 'h';
   const fit = (req.query.fit) ? req.query.fit : 'fill';
+  const sort = (req.query.sort) ? req.query.sort : 'published';
   const share = (req.query.share) ? req.query.share : '';
 
   const validation = valid.validateVars([
@@ -63,6 +63,7 @@ router.get('/', async (req, res, next) => {
     {name: 'timeTo', value: timeTo, type: 'time'},
     {name: 'Orientation', value: orientation, type: 'alpha', selection: ORIENTATIONS},
     {name: 'Fit', value: fit, type: 'alpha', selection: FITS},
+    {name: 'Sort', value: sort, type: 'alpha', selection: SORTS},
     {name: 'Share', value: share, type: '', selection: ['', 'twitter']},
   ]);
 
@@ -71,7 +72,7 @@ router.get('/', async (req, res, next) => {
   }
 
   try {
-    const hash = barcode.createHash(width, height, dateFrom, dateTo, timeFrom, timeTo, orientation, fit, share);
+    const hash = barcode.createHash(width, height, dateFrom, dateTo, timeFrom, timeTo, orientation, fit, sort, share);
     const finalFilepath = `${process.env.RESULT_FOLDER}/output_${hash}.jpg`;
 
     if(cache.get(hash)){
@@ -80,6 +81,7 @@ router.get('/', async (req, res, next) => {
     }
 
     const paths = {
+      imageFolder: `${fit}-${orientation}`,
       downloads: `${process.env.DOWNLOAD_FOLDER}/${fit}-${orientation}`,
       result: `${process.env.RESULT_FOLDER}`,
       output: finalFilepath
@@ -91,10 +93,8 @@ router.get('/', async (req, res, next) => {
       return res.json({ error: `No images found with the search parameters, please adjust your date range and try again` });
     }
 
-    const config = barcode.createConfig(orientation, fit, allImageIds.length, width, height, paths);
-    const imageFolder = `${fit}-${orientation}`;
-
-    const uncachedImages = getUncachedImages(allImageIds, fit, cache.get(imageFolder));
+    const config = barcode.createConfig(orientation, fit, allImageIds.length, width, height, paths, sort);
+    const uncachedImages = getUncachedImages(allImageIds, fit, cache.get(paths.imageFolder));
     const uncachedImagePaths = barcode.createImagePaths(config, uncachedImages);
     const uncachedImagePromises = barcode.getImagePromises(config, uncachedImagePaths);
 
@@ -103,12 +103,12 @@ router.get('/', async (req, res, next) => {
       .then(promiseResults => {
 
         //add new images to cache
-        const fitImageList = cache.get(imageFolder);
+        const fitImageList = cache.get(paths.imageFolder);
         if(fitImageList && fitImageList.length > 0){
           const newList = fitImageList.concat(promiseResults.new);
-          cache.set(imageFolder, newList);
+          cache.set(paths.imageFolder, newList);
         } else {
-          cache.set(imageFolder, promiseResults.new);
+          cache.set(paths.imageFolder, promiseResults.new);
         }
 
         //remove missing images from allImageIds
