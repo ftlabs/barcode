@@ -1,5 +1,4 @@
 const express = require('express');
-const path = require('path');
 const fs = require('fs');
 const router = express.Router();
 const cache = require('../helpers/cache');
@@ -9,7 +8,7 @@ const barcode = require('../modules/Barcode');
 
 // barf on startup if these folders are not specified in env or set up
 const ORIENTATIONS  = ['v', 'h'];
-const FITS          = ['cover', 'fill'];
+const FITS          = ['cover', 'fill', 'solid'];
 const SORTS         = ['published', 'colour'];
 const FOLDER_PARAMS = ['DOWNLOAD_FOLDER', 'RESULT_FOLDER'];
 
@@ -23,7 +22,6 @@ try{
     if (!fs.existsSync(val)) {
       throw new Error(`${param}, ${val}, not found`);
     }
-
   });
 
   ORIENTATIONS.forEach( orientation => {
@@ -35,15 +33,11 @@ try{
       }
     })
   });
-
-  if (!fs.existsSync(`${process.env.DOWNLOAD_FOLDER}/colour`)) {
-    throw new Error(`${param}, colour, not found`);
-  }
 } catch (err) {
   throw new Error(`startup, pre-router: ${err}`);
 }
 
-router.get('/', async (req, res, next) => {
+router.get('/', async (req, res) => {
   const width = (req.query.width) ? req.query.width : 1024;
   const height = (req.query.height) ? req.query.height : 768;
   const dateFrom = (req.query.dateFrom) ? req.query.dateFrom : '2018-11-15';
@@ -86,8 +80,7 @@ router.get('/', async (req, res, next) => {
       return res.end(fs.readFileSync(finalFilepath), 'binary');
     }
 
-    const imageFolder = (sort === 'colour') ? 'colour' : `${fit}-${orientation}`;
-
+    const imageFolder = `${fit}-${orientation}`;
     const paths = {
       downloads: `${process.env.DOWNLOAD_FOLDER}/${imageFolder}`,
       result: `${process.env.RESULT_FOLDER}`,
@@ -101,9 +94,6 @@ router.get('/', async (req, res, next) => {
     }
 
     const config = barcode.createConfig(orientation, fit, allImageIds.length, width, height, paths, sort);
-
-    //TODO - if colour is active add additional iamge requests for 1x1 pixel images
-
     const uncachedImages = getUncachedImages(allImageIds, fit, cache.get(imageFolder));
     const uncachedImagePaths = barcode.createImagePaths(config, uncachedImages);
     const uncachedImagePromises = barcode.getImagePromises(config, uncachedImagePaths);

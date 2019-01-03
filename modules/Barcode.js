@@ -23,43 +23,38 @@ function createConfig(orientation, fit, num, width, height, paths, sort){
     paths: paths
   };
 
-  if(fit === 'fill'){
-    if(orientation === 'h'){
-      config.span = Math.ceil( (height/100) * (100 / num) );
-    } else {
-      config.span = Math.ceil( (width/100) * (100 / num) );
-    }
+  if(orientation === 'h'){
+    config.span = Math.ceil( (height/100) * (100 / num) );
   } else {
-    if(orientation === 'h'){
-      config.height = Math.ceil( (height/100) * (100 / num) );
-      config.span = config.height;
-    } else {
-      config.width = Math.ceil( (width/100) * (100 / num) );
-      config.span = config.width;
-    }
+    config.span = Math.ceil( (width/100) * (100 / num) );
   }
+
   return config;
 }
 
 function createImagePaths(config, images){
   let width = 0;
   let height = 0;
+  let fit = "";
 
-  if(config.sort === 'colour'){
+  if(config.fit === 'solid'){
     width = 1;
     height = 1;
+    fit = 'fill';
   } else if(config.fit === 'fill'){
     width = 10;
     height = 10;
+    fit = 'fill';
   } else if(config.fit === 'cover'){
     width = config.width;
     height = config.height;
+    fit = 'cover';
   }
 
   return images.map(id => {
     return {
       id: id,
-      path: `https://www.ft.com/__origami/service/image/v2/images/raw/http%3A%2F%2Fprod-upp-image-read.ft.com%2F${id}?source=ftlabs-barcode&format=jpg&width=${width}&height=${height}&quality=highest&fit=${config.fit}`
+      path: `https://www.ft.com/__origami/service/image/v2/images/raw/http%3A%2F%2Fprod-upp-image-read.ft.com%2F${id}?source=ftlabs-barcode&format=jpg&width=${width}&height=${height}&quality=highest&fit=${fit}`
     };
   });
 }
@@ -104,16 +99,23 @@ function getDownloadPromise(config, imageItem) {
     const destination = `${config.paths.downloads}/${imageItem.id}.jpg`;
     let width;
     let height;
+    let fit;
 
-    if(config.fit === 'fill' && config.sort != 'colour'){
+    if(config.fit === 'fill'){
       width = (config.orientation === 'h') ? maxFillDimension : minFillDimension;
       height = (config.orientation === 'h') ? minFillDimension : maxFillDimension;
+      fit = 'fill';
+    } else if (config.fit === 'solid') {
+      width = (config.orientation === 'h') ? config.width : config.span;
+      height = (config.orientation === 'h') ? config.span : config.height;
+      fit = 'fill';
     } else {
       width = (config.orientation === 'h') ? config.width : config.span;
       height = (config.orientation === 'h') ? config.span : config.height;
+      fit = 'cover';
     }
 
-    const resizeTransform = sharp().resize(width, height , { fit: config.fit });
+    const resizeTransform = sharp().resize(width, height , { fit: fit });
 
     https.get(imageItem.path, downloadStream => {
       let writeStream = filesystem.createWriteStream(destination);
@@ -163,13 +165,9 @@ function createStitchedImage(config, imageIDs){
       renderGm.tile(`1x${imageIDs.length}`);
     }
 
-    if(config.fit === 'fill'){
-      renderGm.geometry('+0+0').resize(config.width, config.height, "!");
-    } else {
-      renderGm.geometry('+0+0');
-    }
-
-    renderGm.write(config.paths.output, function (err) {
+    renderGm.geometry('+0+0')
+      .resizeExact(config.width, config.height)
+      .write(config.paths.output, function (err) {
         if (err){
           throw err;
         };

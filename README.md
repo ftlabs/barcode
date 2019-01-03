@@ -88,7 +88,8 @@ You can also optionally pass the following parameters:
 + **dateFrom** - date to start image selection from - *default 2018-11-15*
 + **dateTo** - date to end image selection on - *default 2018-11-16*
 + **orientation** - stack images horizontally or vertically - **h/v** - *default h*
-+ **fit** - gets images as masks or squashed - **fill/cover** - *default fill*
++ **fit** - gets images as masks or squashed - **fill/cover/solid** - *default fill*
++ **sort** - display order of images - **published/colour** - *published fill*
 
 
 ### What technologies does it use?
