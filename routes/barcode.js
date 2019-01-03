@@ -80,9 +80,9 @@ router.get('/', async (req, res) => {
       return res.end(fs.readFileSync(finalFilepath), 'binary');
     }
 
-    const imageFolder = `${fit}-${orientation}`;
     const paths = {
-      downloads: `${process.env.DOWNLOAD_FOLDER}/${imageFolder}`,
+      imageFolder: `${fit}-${orientation}`,
+      downloads: `${process.env.DOWNLOAD_FOLDER}/${fit}-${orientation}`,
       result: `${process.env.RESULT_FOLDER}`,
       output: finalFilepath
     };
@@ -94,7 +94,7 @@ router.get('/', async (req, res) => {
     }
 
     const config = barcode.createConfig(orientation, fit, allImageIds.length, width, height, paths, sort);
-    const uncachedImages = getUncachedImages(allImageIds, fit, cache.get(imageFolder));
+    const uncachedImages = getUncachedImages(allImageIds, fit, cache.get(paths.imageFolder));
     const uncachedImagePaths = barcode.createImagePaths(config, uncachedImages);
     const uncachedImagePromises = barcode.getImagePromises(config, uncachedImagePaths);
 
@@ -103,12 +103,12 @@ router.get('/', async (req, res) => {
       .then(promiseResults => {
 
         //add new images to cache
-        const fitImageList = cache.get(imageFolder);
+        const fitImageList = cache.get(paths.imageFolder);
         if(fitImageList && fitImageList.length > 0){
           const newList = fitImageList.concat(promiseResults.new);
-          cache.set(imageFolder, newList);
+          cache.set(paths.imageFolder, newList);
         } else {
-          cache.set(imageFolder, promiseResults.new);
+          cache.set(paths.imageFolder, promiseResults.new);
         }
 
         //remove missing images from allImageIds

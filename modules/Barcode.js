@@ -1,9 +1,10 @@
-const sharp = require('sharp');
+
 const https = require('https');
-const graphicsmagick = require("gm");
 const filesystem = require("fs");
-const twitter = require('twitter');
 const crypto = require('crypto');
+const twitter = require('twitter');
+const graphicsmagick = require("gm");
+const sharp = require('sharp');
 const rgbHex = require('rgb-hex');
 const colorSort = require('color-sort');
 const average = require('image-average-color');
@@ -97,38 +98,26 @@ function getDownloadPromise(config, imageItem) {
     const minFillDimension = 10;
     const maxFillDimension = 2000;
     const destination = `${config.paths.downloads}/${imageItem.id}.jpg`;
+    let fit = (config.fit === 'solid') ? 'fill' : config.fit;
     let width;
     let height;
-    let fit;
 
     if(config.fit === 'fill'){
       width = (config.orientation === 'h') ? maxFillDimension : minFillDimension;
       height = (config.orientation === 'h') ? minFillDimension : maxFillDimension;
-      fit = 'fill';
-    } else if (config.fit === 'solid') {
-      width = (config.orientation === 'h') ? config.width : config.span;
-      height = (config.orientation === 'h') ? config.span : config.height;
-      fit = 'fill';
     } else {
       width = (config.orientation === 'h') ? config.width : config.span;
       height = (config.orientation === 'h') ? config.span : config.height;
-      fit = 'cover';
     }
 
-    const resizeTransform = sharp().resize(width, height , { fit: fit });
+    const resizeTransform = sharp().resize(width, height, { fit: fit });
 
     https.get(imageItem.path, downloadStream => {
       let writeStream = filesystem.createWriteStream(destination);
       downloadStream.pipe(resizeTransform).pipe(writeStream);
 
-      const winState = {
-        id: imageItem.id,
-        status: 1
-      }
-      const failState = {
-        id: imageItem.id,
-        status: 0
-      }
+      const winState = { id: imageItem.id, status: 1 };
+      const failState = { id: imageItem.id, status: 0 };
 
       writeStream.on('finish', () => {
         writeStream.end();
@@ -177,15 +166,14 @@ function createStitchedImage(config, imageIDs){
 }
 
 async function colourSortIDs(config, imageIDs){
-  let returnedImageIDs = ['dfsf'];
+  let returnedImageIDs = [];
   let colourPromises = [];
     
   imageIDs.forEach(image => {
-
     const colourPromise = new Promise(function(resolve){
       average(`${config.paths.downloads}/${image}.jpg`, (err, color) => {
         if (err) throw err;
-        var [red, green, blue] = color;
+        let [red, green, blue] = color;
         resolve({
           id: image,
           hex: `#${rgbHex(red, green, blue)}`
@@ -212,8 +200,8 @@ async function colourSortIDs(config, imageIDs){
 function sortByHex(imageData){
   let justHexes = imageData.map(item => item.hex);
   let sortedArray = colorSort(justHexes);
-
   let sortedImageIds = [];
+  
   sortedArray.forEach(hex => {
     imageData.forEach((image, index) => {
       if(image != null && image.hex === hex){
