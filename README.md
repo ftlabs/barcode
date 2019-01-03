@@ -117,7 +117,7 @@ You can also optionally pass the following parameters:
 
 A list of some interesting expansions for the project:
 
-+ Sort by (pixel) colour
++ ~Sort by (pixel) colour~
 + ~Allow searching for date AND time ranges~
 + Add the option to search by theme, person, genre
 + On startup check for any existing images and add paths to cache
