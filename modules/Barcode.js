@@ -19,21 +19,12 @@ function createConfig(orientation, fit, num, width, height, paths){
     paths: paths
   };
 
-  if(fit === 'fill'){
-    if(orientation === 'h'){
-      config.span = Math.ceil( (height/100) * (100 / num) );
-    } else {
-      config.span = Math.ceil( (width/100) * (100 / num) );
-    }
+  if(orientation === 'h'){
+    config.span = Math.ceil( (height/100) * (100 / num) );
   } else {
-    if(orientation === 'h'){
-      config.height = Math.ceil( (height/100) * (100 / num) );
-      config.span = config.height;
-    } else {
-      config.width = Math.ceil( (width/100) * (100 / num) );
-      config.span = config.width;
-    }
+    config.span = Math.ceil( (width/100) * (100 / num) );
   }
+  
   return config;
 }
 
@@ -143,13 +134,9 @@ function createStitchedImage(config, imageIDs){
       renderGm.tile(`1x${imageIDs.length}`);
     }
 
-    if(config.fit === 'fill'){
-      renderGm.geometry('+0+0').resize(config.width, config.height, "!");
-    } else {
-      renderGm.geometry('+0+0');
-    }
-
-    renderGm.write(config.paths.output, function (err) {
+    renderGm.geometry('+0+0')
+      .resizeExact(config.width, config.height)
+      .write(config.paths.output, function (err) {
         if (err){
           throw err;
         };
