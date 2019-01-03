@@ -53,17 +53,23 @@ The created image is then posted to Twitter.
 
 ### How does that look?
 
-![Alt text](./docs/vertical_fill.png?raw=true "Example Vertical line image with fill parameter")
+![Alt text](./docs/readme/vertical_fill.png?raw=true "Example Vertical line image with fill parameter")
 *Images from 13th Nov - 14th Nov 2018 using vertical & fill parameters*
 
-![Alt text](./docs/vertical_cover.png?raw=true "Example Vertical line image with cover parameter")
+![Alt text](./docs/readme/vertical_cover.png?raw=true "Example Vertical line image with cover parameter")
 *Images from 13th Nov - 14th Nov 2018 using vertical & cover parameters*
 
-![Alt text](./docs/horizontal_fill.png?raw=true "Example Vertical line image with fill parameter")
+![Alt text](./docs/readme/vertical_colour_sort.png?raw=true "Example Vertical colour image with colour sorting")
+*Images from 13th Nov - 14th Nov 2018 using vertical & colour parameters*
+
+![Alt text](./docs/readme/horizontal_fill.png?raw=true "Example Horizontal line image with fill parameter")
 *Images from 13th Nov - 14th Nov 2018 using horizontal & fill parameters*
 
-![Alt text](./docs/horizontal_cover.png?raw=true "Example Vertical line image with cover parameter")
+![Alt text](./docs/readme/horizontal_cover.png?raw=true "Example Horizontal line image with cover parameter")
 *Images from 13th Nov - 14th Nov 2018 using horizontal & cover parameters*
+
+![Alt text](./docs/readme/horizontal_colour_sort.png?raw=true "Example Horizontal colour image with colour sorting")
+*Images from 13th Nov - 14th Nov 2018 using horizontal & colour parameters*
 
 
 ### How can I use it?
@@ -116,3 +122,47 @@ A list of some interesting expansions for the project:
 + On startup check for any existing images and add paths to cache
 + Use Rekognition to identify images of a given person and return a barcode of that person (or even a mosaic?)
 
+
+## Lessons learned
+
+### Image genereation speed
+
+**WIP**
+
+How to make the creation of images faster
+
+- file name caching
+- less file read and writes
+
+
+
+### Extract pixel colour from an image? Easy...right?
+
+One of the awesome feature creeps was the option to sort the images that make up the barcode by colour.
+I thought it would be simple enough to get a 1x1 pixel image from Origami, get the colour of that pixel and use that as the sort value.
+
+However I couldn't work out how to interperet the raw image data, during the file request stream, to get an RGB value of the image therefore not needing to read the image twice.
+
+**Fix:** Currently using the npm package [`image-average-color`](https://www.npmjs.com/package/image-average-color) to get colour from an image
+
+
+### Sort by colour? Easy...right?
+
+Once the RGB/Hex colours for each image have been found they need to be sorted into some kind of colour/saturation/brightness order. 
+
+**WIP**
+
+**Fix:** *Currently working on a set of new filters for colour sorting options*
+
+
+### Additional white bars appearing in images
+
+![Alt text](./docs/lessons_learned/additional_whitebars.png?raw=true "Example barcode image with additional white bars on some images")
+
+While working on the colour sorting feature we found that some images were getting additional whitebars on the top and bottom of the image, even though the downloaded image did not have them.
+
+After some super detective work (thanks Lily), it was discovered that affected downloaded images had an additional resolution parameter that the others did not. This was because they were png's while the other iamges were jpgs.
+
+**Fix:** Added `&format=jpg` to the Origami image request
+
+![Alt text](./docs/lessons_learned/additional_whitebars_fixed.png?raw=true "Example barcode image with additional white bars removed")
