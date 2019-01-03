@@ -5,7 +5,6 @@ const filesystem = require("fs");
 const twitter = require('twitter');
 const crypto = require('crypto');
 const rgbHex = require('rgb-hex');
-const hexSorter = require('hexSorter');
 const colorSort = require('color-sort');
 const average = require('image-average-color');
 
@@ -60,7 +59,7 @@ function createImagePaths(config, images){
   return images.map(id => {
     return {
       id: id,
-      path: `https://www.ft.com/__origami/service/image/v2/images/raw/http%3A%2F%2Fprod-upp-image-read.ft.com%2F${id}?source=ftlabs-barcode&width=${width}&height=${height}&quality=highest&fit=${config.fit}`
+      path: `https://www.ft.com/__origami/service/image/v2/images/raw/http%3A%2F%2Fprod-upp-image-read.ft.com%2F${id}?source=ftlabs-barcode&format=jpg&width=${width}&height=${height}&quality=highest&fit=${config.fit}`
     };
   });
 }
@@ -227,17 +226,6 @@ function sortByHex(imageData){
   });
 
   return sortedImageIds;
-}
-
-function sortHexes(input) {
-  let color;
-  let sortedArray = [];
-  for (let i = input.length - 1; i >= 0; i--) {
-    color = hexSorter.mostBrightColor(input);
-    input.splice(input.indexOf(color), 1);
-    sortedArray.push(color);
-  }
-  return sortedArray;
 }
 
 module.exports = {
