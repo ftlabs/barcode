@@ -29,7 +29,7 @@ function createConfig(orientation, fit, num, width, height, paths, sort){
   } else {
     config.span = Math.ceil( (width/100) * (100 / num) );
   }
-
+  
   return config;
 }
 
