@@ -45,9 +45,9 @@ router.get('/', async (req, res) => {
   const dateTo = (req.query.dateTo) ? req.query.dateTo : '2018-11-16';
   const timeFrom = (req.query.timeFrom) ? req.query.timeFrom : '00:00:00';
   const timeTo = (req.query.timeTo) ? req.query.timeTo : '00:00:00';
-  const orientation = (req.query.orientation) ? req.query.orientation : 'h';
+  const orientation = (req.query.orientation) ? req.query.orientation : 'v';
   const fit = (req.query.fit) ? req.query.fit : 'fill';
-  const order = (req.query.order) ? req.query.order : 'published';
+  const order = (req.query.order) ? req.query.order : 'colour';
   const sort = (req.query.sort) ? req.query.sort : 'asc';
   const share = (req.query.share) ? req.query.share : '';
 

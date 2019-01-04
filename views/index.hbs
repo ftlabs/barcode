@@ -25,19 +25,19 @@
       <input type="time" id="timeTo" name="dateTo" min="00:00:00" max="23:59:59"  placeholder="00:00" value="00:00">
       <span>&amp;orientation=</span>
       <select id="orientation" name="orientation">
-        <option value="h" selected>horizontal</option>
-        <option value="v">vertical</option>
+        <option value="h">horizontal</option>
+        <option value="v" selected>vertical</option>
       </select>
       <span>&amp;fit=</span>
       <select id="fit" name="fit">
-        <option value="cover" selected>cover</option>
-        <option value="fill">fill</option>
+        <option value="cover">cover</option>
+        <option value="fill" selected>fill</option>
         <option value="solid">solid</option>
       </select>
       <span>&amp;order=</span>
       <select id="order" name="order">
-        <option value="published" selected>published</option>
-        <option value="colour">colour</option>
+        <option value="published">published</option>
+        <option value="colour" selected>colour</option>
       </select>
       <span>&amp;sort=</span>
       <select id="sort" name="sort">
@@ -77,20 +77,20 @@
         <b>timeTo</b> <i>time</i> : time to end image selection on, hh/mm/ss format- <i>(default 00:00:00)</i> 
       </li>
       <li>
-        <b>orientation</b> <i>string</i> : stack images horizontally or vertically - <i>(h default)</i>
+        <b>orientation</b> <i>string</i> : stack images horizontally or vertically - <i>(v default)</i>
       </li>
       <li>
         <b>fit</b> <i>string</i> : gets images as masks, squashed or solid colours- <i>(fill default)</i>
       </li>
       <li>
-        <b>order</b> <i>string</i> : display order of images - <i>(published default)</i>
+        <b>order</b> <i>string</i> : display order of images - <i>(colour default)</i>
       </li>
       <li>
         <b>sort</b> <i>string</i> : sort order by asc or desc - <i>(asc default)</i>
       </li>
     </ul>
     <p>
-      e.g. <a target="_blank" href="/barcode?width=1024&height=768&dateFrom=2018-11-13&timeFrom=00:00:00&dateTo=2018-11-14&timeTo=00:00:00&orientation=v&fit=fill&order=published&sort=asc">/barcode?width=1024&amp;height=768&amp;dateFrom=2018-11-13&amp;timeFrom=00:00:00&amp;dateTo=2018-11-14&amp;timeTo=00:00:00&amp;orientation=v&amp;fit=fill&amp;order=published&amp;sort=asc</a>
+      e.g. <a target="_blank" href="/barcode?width=1024&height=768&dateFrom=2018-11-13&timeFrom=00:00:00&dateTo=2018-11-14&timeTo=00:00:00&orientation=v&fit=fill&order=colour&sort=asc">/barcode?width=1024&amp;height=768&amp;dateFrom=2018-11-13&amp;timeFrom=00:00:00&amp;dateTo=2018-11-14&amp;timeTo=00:00:00&amp;orientation=v&amp;fit=fill&amp;order=colour&amp;sort=asc</a>
     </p>
     <script src="/static/js/script.js"></script>
   </body>
