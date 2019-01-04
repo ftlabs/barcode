@@ -142,6 +142,10 @@ function createStitchedImage(config, imageIDs){
       imageIDs = await colourOrderIDs(config, imageIDs);
     }
 
+    if(config.sort === 'desc'){
+      imageIDs.reverse();
+    }
+
     imageIDs.forEach(image => {
       renderGm.montage(`${config.paths.downloads}/${image}.jpg`);
     });
