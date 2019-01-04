@@ -74,7 +74,7 @@ router.get('/', async (req, res) => {
   if(validation.length != 0){
     return res.json({ errors: validation });
   }
-
+  
   try {
     const hash = barcode.createHash(width, height, dateFrom, dateTo, timeFrom, timeTo, orientation, fit, order, sort, share);
     const finalFilepath = `${process.env.RESULT_FOLDER}/output_${hash}.jpg`;
