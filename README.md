@@ -117,7 +117,7 @@ A list of some interesting expansions for the project:
 
 + ~Sort by (pixel) colour~
 + ~Allow searching for date AND time ranges~
-+ Allow sorting (publish/colour) by ASC and DESC
++ ~Allow sorting order to be sorted (publish/colour) by ASC and DESC~
 + Add more colour sorting variations
 + Add the option to search by theme, person, genre
 + On startup check for any existing images and add paths to cache
