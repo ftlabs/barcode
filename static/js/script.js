@@ -13,9 +13,7 @@ var inputIds = [
   'sort'
 ];
 
-document.addEventListener("DOMContentLoaded", function() {
-  init();
-});
+document.addEventListener("DOMContentLoaded", init);
 
 function init(){
   queryLink	= document.getElementById('queryBuilderLink');
