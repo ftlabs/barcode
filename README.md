@@ -118,14 +118,13 @@ A list of some interesting expansions for the project:
 + ~Sort by (pixel) colour~
 + ~Allow searching for date AND time ranges~
 + ~Allow sorting order to be sorted (publish/colour) by ASC and DESC~
++ ~Reset defaults to this: 'http://localhost:8000/barcode?width=1024&height=768&dateFrom=2018-11-13&timeFrom=00:00:00&dateTo=2018-11-14&timeTo=00:00:00&orientation=v&fit=fill&order=colour&sort=asc'~
++ ~Add a bespoke 'today' URL to use defaults~
 + Add more colour sorting variations
 + Add the option to search by theme, person, genre
 + On startup check for any existing images and add paths to cache
 + Use Rekognition to identify images of a given person and return a barcode of that person (or even a mosaic?)
 + Look into setting cache expiry
-+ Reset defaults to this:
-    - 'http://localhost:8000/barcode?width=1024&height=768&dateFrom=2018-11-13&timeFrom=00:00:00&dateTo=2018-11-14&timeTo=00:00:00&orientation=v&fit=fill&order=colour&sort=asc'
-+ Add a bespoke 'today' URL to use defaults
 
 
 ## Lessons learned
