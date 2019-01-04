@@ -126,6 +126,13 @@ A list of some interesting expansions for the project:
 
 ## Lessons learned
 
+### Creating stretched images
+
+Barcode was started to be the succesor to project Overview's [Last 24 hours of images, stretched](https://ftlabs-overview.herokuapp.com/24hrs/stretchedImages).
+
+
+
+
 ### Image genereation speed
 
 **WIP**
