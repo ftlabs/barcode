@@ -13,13 +13,14 @@ function createHash(...items){
   return crypto.createHash('md5').update(items.toString()).digest("hex");
 }
 
-function createConfig(orientation, fit, num, width, height, paths, sort){
+function createConfig(orientation, fit, num, width, height, paths, order, sort){
   const config = {
     orientation : orientation,
     width: parseInt(width),
     height: parseInt(height),
     span: 0,
     fit: fit,
+    order: order,
     sort: sort,
     paths: paths
   };
@@ -137,8 +138,12 @@ function createStitchedImage(config, imageIDs){
   return new Promise(async function(resolve) {
     const renderGm = graphicsmagick();
 
-    if(config.sort === 'colour'){
-      imageIDs = await colourSortIDs(config, imageIDs);
+    if(config.order === 'colour'){
+      imageIDs = await colourOrderIDs(config, imageIDs);
+    }
+
+    if(config.sort === 'desc'){
+      imageIDs.reverse();
     }
 
     imageIDs.forEach(image => {
@@ -162,7 +167,7 @@ function createStitchedImage(config, imageIDs){
   });
 }
 
-async function colourSortIDs(config, imageIDs){
+async function colourOrderIDs(config, imageIDs){
   let returnedImageIDs = [];
   let colourPromises = [];
     
@@ -182,7 +187,7 @@ async function colourSortIDs(config, imageIDs){
   });
 
   await Promise.all(colourPromises)
-    .then(values => sortByHex(values))
+    .then(values => orderByHex(values))
     .then(values => {
       returnedImageIDs = values;
       return values;
@@ -194,21 +199,21 @@ async function colourSortIDs(config, imageIDs){
   return returnedImageIDs;
 }
 
-function sortByHex(imageData){
+function orderByHex(imageData){
   let justHexes = imageData.map(item => item.hex);
-  let sortedArray = colorSort(justHexes);
-  let sortedImageIds = [];
+  let orderedArray = colorSort(justHexes);
+  let orderedImageIds = [];
   
-  sortedArray.forEach(hex => {
+  orderedArray.forEach(hex => {
     imageData.forEach((image, index) => {
       if(image != null && image.hex === hex){
-        sortedImageIds.push(image.id);
+        orderedImageIds.push(image.id);
         imageData[index] = null;
       }
     })
   });
 
-  return sortedImageIds;
+  return orderedImageIds;
 }
 
 module.exports = {

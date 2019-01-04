@@ -83,11 +83,12 @@ You can also optionally pass the following parameters:
 
 + **width** - width of returned image - *default 1024*
 + **height** - height of returned image - *default 768*
-+ **dateFrom** - date to start image selection from - *default 2018-11-15*
-+ **dateTo** - date to end image selection on - *default 2018-11-16*
-+ **orientation** - stack images horizontally or vertically - **h/v** - *default h*
++ **dateFrom** - date to start image selection from - *default yesterdays date*
++ **dateTo** - date to end image selection on - *default todays date*
++ **orientation** - stack images horizontally or vertically - **h/v** - *default v*
 + **fit** - gets images as masks or squashed - **fill/cover/solid** - *default fill*
-+ **sort** - display order of images - **published/colour** - *published fill*
++ **order** - display order of images - **published/colour** - *default colour*
++ **sort** - sort order by asc or desc - **asc/desc** - *default asc*
 
 
 ### What technologies does it use?
@@ -117,7 +118,7 @@ A list of some interesting expansions for the project:
 
 + ~Sort by (pixel) colour~
 + ~Allow searching for date AND time ranges~
-+ Allow sorting (publish/colour) by ASC and DESC
++ ~Allow sorting order to be sorted (publish/colour) by ASC and DESC~
 + Add more colour sorting variations
 + Add the option to search by theme, person, genre
 + On startup check for any existing images and add paths to cache
