@@ -83,8 +83,8 @@ You can also optionally pass the following parameters:
 
 + **width** - width of returned image - *default 1024*
 + **height** - height of returned image - *default 768*
-+ **dateFrom** - date to start image selection from - *default 2018-11-15*
-+ **dateTo** - date to end image selection on - *default 2018-11-16*
++ **dateFrom** - date to start image selection from - *default yesterdays date*
++ **dateTo** - date to end image selection on - *default todays date*
 + **orientation** - stack images horizontally or vertically - **h/v** - *default v*
 + **fit** - gets images as masks or squashed - **fill/cover/solid** - *default fill*
 + **order** - display order of images - **published/colour** - *default colour*

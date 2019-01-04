@@ -46,10 +46,35 @@ function msDuration(period, increment){
 }
 
 function getDateTimeToQueryTime(date, time = '00:00:00'){
-  return `${date}T${time}Z`;
+	return `${date}T${time}Z`;
+}
+
+function today(){
+	return date();
+}
+
+function yesterday() {
+	return date(-1);
+}
+
+function date(offset = 0) {
+	var now = new Date();
+	
+	if(offset && offset != 0){
+		now.setDate(now.getDate() + offset);
+	}
+
+    var y = now.getFullYear();
+    var m = now.getMonth() + 1;
+    var d = now.getDate();
+    var mm = m < 10 ? '0' + m : m;
+    var dd = d < 10 ? '0' + d : d;
+    return `${y}-${mm}-${dd}`;
 }
 
 module.exports = {
-  getDatetimeRange,
-  getDateTimeToQueryTime
+	today,
+	yesterday,
+	getDatetimeRange,
+	getDateTimeToQueryTime
 };
