@@ -29,9 +29,7 @@ function createURLQueryString(elements){
 
 function date(offset = 0) {
 	let now = new Date(); 
-	if(offset && offset != 0){
-		now.setDate(now.getDate() + offset);
-	}
+	now.setDate(now.getDate() + offset);
     const y = now.getFullYear();
     const m = now.getMonth() + 1;
     const d = now.getDate();
