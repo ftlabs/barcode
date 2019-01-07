@@ -19,6 +19,9 @@ TWITTER_ACCESS_TOKEN_KEY= #
 TWITTER_ACCESS_TOKEN_SECRET= #
 DOWNLOAD_FOLDER=downloads # path to folder allowing image downloads
 RESULT_FOLDER=downloads/results # path to folder for final combined image storage
+SLACK_TOKEN= # slack bot token 
+SLACK_CHANNEL= # slack channel to post to (the bot must be a member of the channel)
+APP_URL= # url of the hosted daily barcode (use ngrok for local testing)
 ```
 
 Install nodemon globally by running `npm install -g nodemon`.
