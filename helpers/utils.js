@@ -160,9 +160,14 @@ function configValidation(config, type, value, message) {
 	}
 }
 
+function minutesToMs(mn) {
+	return mn*60*1000;
+}
+
 module.exports = {
 	extractUser: getS3OUserFromCookie,      // get the s30 username from cookies
 	splitTextIntoChunks: checkAndSplitText, // split text without splitting words
 	pauseForMillis: pauseForMillis,         // promise to wait for a bit
-	processEnv                              // wrapper for processing env params
+	processEnv,                           // wrapper for processing env params
+	minutesToMs
 };
