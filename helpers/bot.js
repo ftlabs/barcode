@@ -2,6 +2,7 @@ if (process.env.NODE_ENV !== 'production') require('dotenv').config();
 const Slackbot = require('slackbots');
 const scheduler = require('./scheduler');
 const Utils = require('./utils');
+const barcode = require('./barcode');
 
 const bot = new Slackbot({
     token: process.env.SLACK_TOKEN,
@@ -24,7 +25,7 @@ function init() {
 function sendMessage() {
 	if(scheduler.onSchedule()) {
 		const channel = process.env.SLACK_CHANNEL;
-		bot.postMessageToGroup(channel, `${process.env.APP_URL}?cacheBust=${new Date().getTime()}`, botParams);
+		bot.postMessageToGroup(channel, `${process.env.APP_URL}?cacheBust=${new Date().getTime()}&${barcode.todaysQueryString()}`, botParams);
 	}
 }
 
