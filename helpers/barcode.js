@@ -8,8 +8,8 @@ function todaysQueryString(){
 		timeTo: '00:00:00',
 		orientation: 'v',
 		fit: 'fill',
-		order: 'asc',
-		sort: 'colour'
+		order: 'colour',
+		sort: 'asc'
 	});
 }
 
