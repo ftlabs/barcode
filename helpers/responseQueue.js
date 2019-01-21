@@ -5,7 +5,7 @@ function addItemToQueue(item) {
 	queue.push(item);
 
 	if(!queueIsProcessing) {
-		processQueue(0);
+		processQueue();
 	}
 }
 
@@ -16,6 +16,8 @@ function removeItemFromQueue(id = 0) {
 
 async function processQueue(queueId = 0) {
 	if(queue.length > 0 && !queueIsProcessing) {
+		console.log(`${queue.length} items in the response queue`);
+		
 		let currentItem = queue[queueId];
 		setQueueStatus();
 		const exec = await currentItem.exec(currentItem.params, currentItem.finalFilepath, currentItem.hash, currentItem.res);
