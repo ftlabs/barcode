@@ -86,7 +86,7 @@ router.get('/', async (req, res) => {
       finalFilepath,
       hash,
       res,
-      exec: generateAndSendBarcode
+      callback: generateAndSendBarcode
     });
 
   } catch (err) {
