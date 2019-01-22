@@ -44,7 +44,7 @@
 		"request": "^2.88.0",
 		"rgb-hex": "^2.1.0",
 		"rss": "^1.2.1",
-		"sharp": "^0.21.1",
+		"sharp": "^0.21.3",
 		"slackbots": "^1.2.0",
 		"striptags": "^2.1.1",
 		"twitter": "^1.7.1",

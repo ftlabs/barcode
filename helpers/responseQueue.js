@@ -11,12 +11,12 @@ function addItemToQueue(item) {
 
 async function processQueue() {
 	if(queue.length > 0 && !queueIsProcessing) {
-		console.log(`${queue.length} items in the response queue`);
+		console.log(`responseQueueLength=${queue.length}`);
 
 		let currentItem = queue.shift();
 		setQueueStatus(true);
 		await currentItem.callback(currentItem.params, currentItem.finalFilepath, currentItem.hash, currentItem.res);
-		
+
 		setQueueStatus(false);
 		processQueue();
 	}
