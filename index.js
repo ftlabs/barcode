@@ -8,7 +8,7 @@ const express = require("express");
 const path = require("path");
 const app = express();
 const barcode = require("./routes/barcode");
-const bot = require('./helpers/bot').init();
+const bot = require('./modules/Bot').init();
 
 if (process.env.NODE_ENV !== 'production') require('dotenv').config();
 

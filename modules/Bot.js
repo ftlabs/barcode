@@ -1,11 +1,11 @@
 const fs = require('fs');
 const path = require('path');
 const Slack = require('node-slack-upload');
-const scheduler = require('./scheduler');
-const Utils = require('./utils');
+const scheduler = require('../helpers/scheduler');
+const Utils = require('../helpers/utils');
 
 const token = Utils.processEnv('SLACK_TOKEN', {default: null});
-// const barcode = require('./barcode');
+// const barcode = require('./Barcode');
 
 let bot;
 let pollInterval = null;

@@ -1,5 +1,5 @@
 let lastSentUpdate = 0;
-const schedule = [10];
+const schedule = [17];
 
 function canSend() {
 	const checkTime = new Date().getHours();
