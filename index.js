@@ -52,4 +52,6 @@ const server = app.listen(PORT, function() {
   console.log("Server is listening on port", PORT);
 });
 
+server.timeout = 180000; //increased to 3min, default is 2
+
 module.exports = server;
