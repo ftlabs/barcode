@@ -8,8 +8,8 @@ const rgbHex = require('rgb-hex');
 const colorSort = require('color-sort');
 const average = require('image-average-color');
 
-function createHash(...items){
-  return crypto.createHash('md5').update(items.toString()).digest("hex");
+function createHash(items){
+  return crypto.createHash('md5').update(JSON.stringify(items)).digest("hex");
 }
 
 function createConfig(orientation, fit, num, width, height, paths, order, sort){
