@@ -9,7 +9,7 @@ function addItemToQueue(item) {
 	}
 }
 
-async function processQueue(queueId) {
+async function processQueue() {
 	if(queue.length > 0 && !queueIsProcessing) {
 		console.log(`${queue.length} items in the response queue`);
 
