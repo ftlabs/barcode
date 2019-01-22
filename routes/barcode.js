@@ -6,6 +6,7 @@ const cache = require('../helpers/cache');
 const valid = require('../helpers/validation');
 const article = require('../modules/Article');
 const barcode = require('../modules/Barcode');
+const queue = require('../helpers/responseQueue');
 
 // barf on startup if these folders are not specified in env or set up
 const ORIENTATIONS  = ['v', 'h'];
@@ -76,33 +77,48 @@ router.get('/', async (req, res) => {
   }
   
   try {
-    const hash = barcode.createHash(width, height, dateFrom, dateTo, timeFrom, timeTo, orientation, fit, order, sort, share);
+    const params = {width, height, dateFrom, dateTo, timeFrom, timeTo, orientation, fit, order, sort, share };
+    const hash = barcode.createHash({...params});
     const finalFilepath = `${process.env.RESULT_FOLDER}/output_${hash}.jpg`;
 
+    return queue.add({
+      params,
+      finalFilepath,
+      hash,
+      res,
+      callback: generateAndSendBarcode
+    });
+
+  } catch (err) {
+    return res.json({ error: `router: ${err}` });
+  }
+});
+
+async function generateAndSendBarcode(params, finalFilepath, hash, res) {
     if(cache.get(hash)){
       res.writeHead(200, {'Content-Type': 'image/jpg' });
       return res.end(fs.readFileSync(finalFilepath), 'binary');
     }
 
     const paths = {
-      imageFolder: `${fit}-${orientation}`,
-      downloads: `${process.env.DOWNLOAD_FOLDER}/${fit}-${orientation}`,
+      imageFolder: `${params.fit}-${params.orientation}`,
+      downloads: `${process.env.DOWNLOAD_FOLDER}/${params.fit}-${params.orientation}`,
       result: `${process.env.RESULT_FOLDER}`,
       output: finalFilepath
     };
 
-    const allImageIds = await article.getImageIdsFromDateRange(dateFrom, dateTo, timeFrom, timeTo);
+    const allImageIds = await article.getImageIdsFromDateRange(params.dateFrom, params.dateTo, params.timeFrom, params.timeTo);
 
     if(allImageIds.length <= 0){
       return res.json({ error: `No images found with the search parameters, please adjust your date range and try again` });
     }
 
-    const config = barcode.createConfig(orientation, fit, allImageIds.length, width, height, paths, order, sort);
-    const uncachedImages = getUncachedImages(allImageIds, fit, cache.get(paths.imageFolder));
+    const config = barcode.createConfig(params.orientation, params.fit, allImageIds.length, params.width, params.height, paths, params.order, params.sort);
+    const uncachedImages = getUncachedImages(allImageIds, params.fit, cache.get(paths.imageFolder));
     const uncachedImagePaths = barcode.createImagePaths(config, uncachedImages);
     const uncachedImagePromises = barcode.getImagePromises(config, uncachedImagePaths);
 
-    Promise.all(uncachedImagePromises)
+    return Promise.all(uncachedImagePromises)
       .then(values => splitNewAndFailed(values))
       .then(promiseResults => {
 
@@ -123,7 +139,7 @@ router.get('/', async (req, res) => {
 
         //stitch new image
         barcode.createStitchedImage(config, allImageIds)
-          .then(() => shareCheck(share, config.paths.output))
+          .then(() => shareCheck(params.share, config.paths.output))
           .then(() => {
             res.writeHead(200, {'Content-Type': 'image/jpg' });
             res.end(fs.readFileSync(config.paths.output), 'binary');
@@ -141,11 +157,7 @@ router.get('/', async (req, res) => {
           message: `${err}`
         });
       });
-	} catch (err) {
-    return res.json({ error: `router: ${err}` });
-  }
-
-});
+}
 
 function getUncachedImages(imageIds, fit, fitImageList){
   const missingImages = [];
