@@ -164,10 +164,22 @@ function minutesToMs(mn) {
 	return mn*60*1000;
 }
 
+function today(offset = 0) {
+	let now = new Date(); 
+	now.setDate(now.getDate() + offset);
+    const y = now.getFullYear();
+    const m = now.getMonth() + 1;
+    const d = now.getDate();
+    const mm = m < 10 ? '0' + m : m;
+    const dd = d < 10 ? '0' + d : d;
+    return `${y}-${mm}-${dd}`;
+}
+
 module.exports = {
 	extractUser: getS3OUserFromCookie,      // get the s30 username from cookies
 	splitTextIntoChunks: checkAndSplitText, // split text without splitting words
 	pauseForMillis: pauseForMillis,         // promise to wait for a bit
 	processEnv,                           // wrapper for processing env params
-	minutesToMs
+	minutesToMs,
+	today
 };

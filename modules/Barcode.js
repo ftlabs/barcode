@@ -7,9 +7,14 @@ const sharp = require('sharp');
 const rgbHex = require('rgb-hex');
 const colorSort = require('color-sort');
 const average = require('image-average-color');
+const fs = require('fs');
 
-function createHash(...items){
-  return crypto.createHash('md5').update(items.toString()).digest("hex");
+const { today } = require('../helpers/utils');
+const cache = require('../helpers/cache');
+const article = require('../modules/Article');
+
+function createHash(items){
+  return crypto.createHash('md5').update(JSON.stringify(items)).digest("hex");
 }
 
 function createConfig(orientation, fit, num, width, height, paths, order, sort){
@@ -215,6 +220,139 @@ function orderByHex(imageData){
   return orderedImageIds;
 }
 
+function todaysQueryString(){
+  return createURLQueryString({
+    width: 1024,
+    height: 768,
+    dateFrom: date(-1),
+    timeFrom: '00:00:00',
+    dateTo: today,
+    timeTo: '00:00:00',
+    orientation: 'v',
+    fit: 'fill',
+    order: 'colour',
+    sort: 'asc'
+  });
+}
+
+function createURLQueryString(elements){
+  const width = (elements.width) ? elements.width : 1024;
+  const height = (elements.height) ? elements.height : 768;
+  const dateFrom = (elements.dateFrom) ? elements.dateFrom : date(-1);
+  const dateTo = (elements.dateTo) ? elements.dateTo : date();
+  const timeFrom = (elements.timeFrom) ? elements.timeFrom : '00:00:00';
+  const timeTo = (elements.timeTo) ? elements.timeTo : '00:00:00';
+  const orientation = (elements.orientation) ? elements.orientation : 'v';
+  const fit = (elements.fit) ? elements.fit : 'fill';
+  const order = (elements.order) ? elements.order : 'colour';
+  const sort = (elements.sort) ? elements.sort : 'asc';
+  return `width=${width}&height=${height}&dateFrom=${dateFrom}&timeFrom=${timeFrom}&dateTo=${dateTo}&timeTo=${timeTo}&orientation=${orientation}&fit=${fit}&order=${order}&sort=${sort}`;
+}
+
+async function generateAndSendBarcode(params, finalFilepath, hash, res) {
+    if(cache.get(hash)){
+      res.writeHead(200, {'Content-Type': 'image/jpg' });
+      return res.end(fs.readFileSync(finalFilepath), 'binary');
+    }
+
+    const paths = {
+      imageFolder: `${params.fit}-${params.orientation}`,
+      downloads: `${process.env.DOWNLOAD_FOLDER}/${params.fit}-${params.orientation}`,
+      result: `${process.env.RESULT_FOLDER}`,
+      output: finalFilepath
+    };
+
+    const allImageIds = await article.getImageIdsFromDateRange(params.dateFrom, params.dateTo, params.timeFrom, params.timeTo);
+
+    if(allImageIds.length <= 0){
+      return res.json({ error: `No images found with the search parameters, please adjust your date range and try again` });
+    }
+
+    const config = createConfig(params.orientation, params.fit, allImageIds.length, params.width, params.height, paths, params.order, params.sort);
+    const uncachedImages = getUncachedImages(allImageIds, params.fit, cache.get(paths.imageFolder));
+    const uncachedImagePaths = createImagePaths(config, uncachedImages);
+    const uncachedImagePromises = getImagePromises(config, uncachedImagePaths);
+
+    return Promise.all(uncachedImagePromises)
+      .then(values => splitNewAndFailed(values))
+      .then(promiseResults => {
+
+        //add new images to cache
+        const fitImageList = cache.get(paths.imageFolder);
+        if(fitImageList && fitImageList.length > 0){
+          const newList = fitImageList.concat(promiseResults.new);
+          cache.set(paths.imageFolder, newList);
+        } else {
+          cache.set(paths.imageFolder, promiseResults.new);
+        }
+
+        //remove missing images from allImageIds
+        const failedImages = promiseResults.failed;
+        failedImages.forEach(id => {
+          allImageIds.splice(allImageIds.indexOf(id), 1);
+        });
+
+        //stitch new image
+        createStitchedImage(config, allImageIds)
+          .then(() => shareCheck(params.share, config.paths.output))
+          .then(() => {
+            res.writeHead(200, {'Content-Type': 'image/jpg' });
+            res.end(fs.readFileSync(config.paths.output), 'binary');
+            cache.set(hash, finalFilepath);
+            return;
+          })
+          .catch((err) => {
+            return res.json({ error: `finalImage: ${err}` });
+          });
+
+      })
+      .catch((err) => {
+        return res.json({
+          error: 'Issue downloading all images',
+          message: `${err}`
+        });
+      });
+}
+
+function getUncachedImages(imageIds, fit, fitImageList){
+  const missingImages = [];
+
+  if(fitImageList && fitImageList.length > 0){
+    imageIds.forEach(id => {
+      if(!fitImageList.includes(id)){
+        missingImages.push(id);
+      }
+    });
+    return missingImages;
+  }
+
+  return imageIds;
+}
+
+function splitNewAndFailed(values){
+  const newImages = [];
+  const failedImages = [];
+
+  values.forEach(item => {
+    if(item.status){
+      newImages.push(item.id);
+    } else {
+      failedImages.push(item.id);
+    }
+  })
+
+  return {
+    new: newImages,
+    failed: failedImages
+  }
+}
+
+function shareCheck(share, imagePath){
+  if(share === 'twitter'){
+    barcode.postTwitter('I am a test tweet', imagePath);
+  }
+}
+
 module.exports = {
   createHash,
   createConfig,
@@ -222,5 +360,8 @@ module.exports = {
   postTwitter,
   getImagePromises,
   getDownloadPromise,
-  createStitchedImage
+  createStitchedImage,
+  todaysQueryString,
+  createURLQueryString,
+  generateAndSendBarcode
 };
