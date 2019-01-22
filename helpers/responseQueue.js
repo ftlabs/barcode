@@ -9,19 +9,15 @@ function addItemToQueue(item) {
 	}
 }
 
-function removeItemFromQueue(id = 0) {
-	queue.splice(id,1);
-	setQueueStatus(false);
-}
-
-async function processQueue(queueId = 0) {
+async function processQueue(queueId) {
 	if(queue.length > 0 && !queueIsProcessing) {
 		console.log(`${queue.length} items in the response queue`);
 
-		let currentItem = queue[queueId];
+		let currentItem = queue.shift();
 		setQueueStatus(true);
 		await currentItem.callback(currentItem.params, currentItem.finalFilepath, currentItem.hash, currentItem.res);
-		removeItemFromQueue(queueId);
+		
+		setQueueStatus(false);
 		processQueue();
 	}
 }
