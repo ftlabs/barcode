@@ -1,19 +1,13 @@
-if (process.env.NODE_ENV !== 'production') require('dotenv').config();
-const Slackbot = require('slackbots');
+const fs = require('fs');
+const path = require('path');
+const Slack = require('node-slack-upload');
 const scheduler = require('./scheduler');
 const Utils = require('./utils');
-const barcode = require('./barcode');
 
-const bot = new Slackbot({
-    token: process.env.SLACK_TOKEN,
-    name: 'barcode'
-});
+const token = Utils.processEnv('SLACK_TOKEN');
+// const barcode = require('./barcode');
 
-const botParams = {
-	icon_url: 'https://www.ft.com/__origami/service/image/v2/images/raw/https%3A%2F%2Ftheearthorganization.org%2Fwp-content%2Fuploads%2F2016%2F04%2Fzebra.jpg?source=ftlabs-barcode',
-	as_user: false
-};
-
+const bot = new Slack(token);
 let pollInterval = null;
 
 function init() {
@@ -24,8 +18,23 @@ function init() {
 
 function sendMessage() {
 	if(scheduler.onSchedule()) {
-		const channel = process.env.SLACK_CHANNEL;
-		bot.postMessageToGroup(channel, `${process.env.APP_URL}?cacheBust=${new Date().getTime()}&${barcode.todaysQueryString()}`, botParams);
+		const channel = Utils.processEnv('SLACK_CHANNEL');
+		const fileName = '96dc48e407313515856ea7770fd15781'; //TODO: getHash dynamically
+		//TODO: check file exists, otherwise generate file first.
+		//TODO: add dynamic title with date ?
+
+		bot.uploadFile({
+		    file: fs.createReadStream(path.join(__dirname,`../${Utils.processEnv('RESULT_FOLDER')}/output_${fileName}.jpg`)),
+		    mimetype: 'image/jpeg',
+        	filetype: 'jpg',
+		    title: 'Today\' barcode',
+		    channels: channel
+		}, function(err, data) {
+		    if (err) {
+		        console.error(`bot.sendMessage.fileUploadError=${err}`);
+		    }
+		});
+
 	}
 }
 
