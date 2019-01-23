@@ -2,9 +2,7 @@ const express = require('express');
 const fs = require('fs');
 const router = express.Router();
 const time = require('../helpers/time');
-const cache = require('../helpers/cache');
 const valid = require('../helpers/validation');
-const article = require('../modules/Article');
 const barcode = require('../modules/Barcode');
 const queue = require('../helpers/responseQueue');
 
@@ -77,7 +75,7 @@ router.get('/', async (req, res) => {
   }
   
   try {
-    const params = {width, height, dateFrom, dateTo, timeFrom, timeTo, orientation, fit, order, sort, share };
+    const params = { width, height, dateFrom, dateTo, timeFrom, timeTo, orientation, fit, order, sort, share };
     const hash = barcode.createHash(params);
     const finalFilepath = `${process.env.RESULT_FOLDER}/output_${hash}.jpg`;
 
@@ -86,117 +84,13 @@ router.get('/', async (req, res) => {
       finalFilepath,
       hash,
       res,
-      callback: generateAndSendBarcode
+      callback: barcode.generateAndSendBarcode
     });
 
   } catch (err) {
     return res.json({ error: `router: ${err}` });
   }
 });
-
-async function generateAndSendBarcode(params, finalFilepath, hash, res) {
-    if(cache.get(hash)){
-      res.writeHead(200, {'Content-Type': 'image/jpg' });
-      return res.end(fs.readFileSync(finalFilepath), 'binary');
-    }
-
-    const paths = {
-      imageFolder: `${params.fit}-${params.orientation}`,
-      downloads: `${process.env.DOWNLOAD_FOLDER}/${params.fit}-${params.orientation}`,
-      result: `${process.env.RESULT_FOLDER}`,
-      output: finalFilepath
-    };
-
-    const allImageIds = await article.getImageIdsFromDateRange(params.dateFrom, params.dateTo, params.timeFrom, params.timeTo);
-
-    if(allImageIds.length <= 0){
-      return res.json({ error: `No images found with the search parameters, please adjust your date range and try again` });
-    }
-
-    const config = barcode.createConfig(params.orientation, params.fit, allImageIds.length, params.width, params.height, paths, params.order, params.sort);
-    const uncachedImages = getUncachedImages(allImageIds, params.fit, cache.get(paths.imageFolder));
-    const uncachedImagePaths = barcode.createImagePaths(config, uncachedImages);
-    const uncachedImagePromises = barcode.getImagePromises(config, uncachedImagePaths);
-
-    return Promise.all(uncachedImagePromises)
-      .then(values => splitNewAndFailed(values))
-      .then(promiseResults => {
-
-        //add new images to cache
-        const fitImageList = cache.get(paths.imageFolder);
-        if(fitImageList && fitImageList.length > 0){
-          const newList = fitImageList.concat(promiseResults.new);
-          cache.set(paths.imageFolder, newList);
-        } else {
-          cache.set(paths.imageFolder, promiseResults.new);
-        }
-
-        //remove missing images from allImageIds
-        const failedImages = promiseResults.failed;
-        failedImages.forEach(id => {
-          allImageIds.splice(allImageIds.indexOf(id), 1);
-        });
-
-        //stitch new image
-        barcode.createStitchedImage(config, allImageIds)
-          .then(() => shareCheck(params.share, config.paths.output))
-          .then(() => {
-            res.writeHead(200, {'Content-Type': 'image/jpg' });
-            res.end(fs.readFileSync(config.paths.output), 'binary');
-            cache.set(hash, finalFilepath);
-            return;
-          })
-          .catch((err) => {
-            return res.json({ error: `finalImage: ${err}` });
-          });
-
-      })
-      .catch((err) => {
-        return res.json({
-          error: 'Issue downloading all images',
-          message: `${err}`
-        });
-      });
-}
-
-function getUncachedImages(imageIds, fit, fitImageList){
-  const missingImages = [];
-
-  if(fitImageList && fitImageList.length > 0){
-    imageIds.forEach(id => {
-      if(!fitImageList.includes(id)){
-        missingImages.push(id);
-      }
-    });
-    return missingImages;
-  }
-
-  return imageIds;
-}
-
-function splitNewAndFailed(values){
-  const newImages = [];
-  const failedImages = [];
-
-  values.forEach(item => {
-    if(item.status){
-      newImages.push(item.id);
-    } else {
-      failedImages.push(item.id);
-    }
-  })
-
-  return {
-    new: newImages,
-    failed: failedImages
-  }
-}
-
-function shareCheck(share, imagePath){
-  if(share === 'twitter'){
-    barcode.postTwitter('I am a test tweet', imagePath);
-  }
-}
 
 
 module.exports = router;

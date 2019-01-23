@@ -1,5 +1,5 @@
 const https = require('https');
-const filesystem = require("fs");
+const fs = require('fs');
 const crypto = require('crypto');
 const twitter = require('twitter');
 const graphicsmagick = require("gm");
@@ -7,6 +7,10 @@ const sharp = require('sharp');
 const rgbHex = require('rgb-hex');
 const colorSort = require('color-sort');
 const average = require('image-average-color');
+
+const { today } = require('../helpers/utils');
+const cache = require('../helpers/cache');
+const article = require('../modules/Article');
 
 function createHash(items){
   return crypto.createHash('md5').update(JSON.stringify(items)).digest("hex");
@@ -65,7 +69,7 @@ function postTwitter(message, mediaPath){
     access_token_secret: process.env.TWITTER_ACCESS_TOKEN_SECRET
   });
 
-  const data = filesystem.readFileSync(mediaPath);
+  const data = fs.readFileSync(mediaPath);
 
   client.post('media/upload', {media: data}, function(error, media, response) {
     if (!error) {
@@ -110,7 +114,7 @@ function getDownloadPromise(config, imageItem) {
     const resizeTransform = sharp().resize(width, height, { fit: fit });
 
     https.get(imageItem.path, downloadStream => {
-      let writeStream = filesystem.createWriteStream(destination);
+      let writeStream = fs.createWriteStream(destination);
       downloadStream.pipe(resizeTransform).pipe(writeStream);
 
       const winState = { id: imageItem.id, status: 1 };
@@ -215,6 +219,138 @@ function orderByHex(imageData){
   return orderedImageIds;
 }
 
+function todaysParams(){
+  return {
+    width: 1024,
+    height: 768,
+    dateFrom: today(-1),
+    dateTo: today(),
+    timeFrom: '00:00:00',
+    timeTo: '00:00:00',
+    orientation: 'v',
+    fit: 'fill',
+    order: 'colour',
+    sort: 'asc',
+    share: ''
+  };
+}
+
+async function generateAndSendBarcode(params, finalFilepath, hash, res) {
+    if(cache.get(hash) && res){
+      res.writeHead(200, {'Content-Type': 'image/jpg' });
+      return res.end(fs.readFileSync(finalFilepath), 'binary');
+    }
+
+    const paths = {
+      imageFolder: `${params.fit}-${params.orientation}`,
+      downloads: `${process.env.DOWNLOAD_FOLDER}/${params.fit}-${params.orientation}`,
+      result: `${process.env.RESULT_FOLDER}`,
+      output: finalFilepath
+    };
+
+    const allImageIds = await article.getImageIdsFromDateRange(params.dateFrom, params.dateTo, params.timeFrom, params.timeTo);
+
+    if(allImageIds.length <= 0){
+      if(res) {
+        return res.json({ error: `No images found with the search parameters, please adjust your date range and try again` }); 
+      }
+      
+      return undefined;
+    }
+
+    const config = createConfig(params.orientation, params.fit, allImageIds.length, params.width, params.height, paths, params.order, params.sort);
+    const uncachedImages = getUncachedImages(allImageIds, params.fit, cache.get(paths.imageFolder));
+    const uncachedImagePaths = createImagePaths(config, uncachedImages);
+    const uncachedImagePromises = getImagePromises(config, uncachedImagePaths);
+
+    return Promise.all(uncachedImagePromises)
+      .then(values => splitNewAndFailed(values))
+      .then(async promiseResults => {
+
+        //add new images to cache
+        const fitImageList = cache.get(paths.imageFolder);
+        if(fitImageList && fitImageList.length > 0){
+          const newList = fitImageList.concat(promiseResults.new);
+          cache.set(paths.imageFolder, newList);
+        } else {
+          cache.set(paths.imageFolder, promiseResults.new);
+        }
+
+        //remove missing images from allImageIds
+        const failedImages = promiseResults.failed;
+        failedImages.forEach(id => {
+          allImageIds.splice(allImageIds.indexOf(id), 1);
+        });
+
+        //stitch new image
+        return await createStitchedImage(config, allImageIds)
+          .then(() => shareCheck(params.share, config.paths.output))
+          .then(() => {
+            if(res) {  
+              res.writeHead(200, {'Content-Type': 'image/jpg' });
+              res.end(fs.readFileSync(config.paths.output), 'binary'); 
+            }
+            cache.set(hash, finalFilepath);
+            return hash;
+          })
+          .catch((err) => {
+            if(res) {
+              return res.json({ error: `finalImage: ${err}` }); 
+            }
+            return undefined;
+          });
+
+      })
+      .catch((err) => {
+        if(res) {
+          return res.json({
+            error: 'Issue downloading all images',
+            message: `${err}`
+          });
+        }
+        return undefined;
+      });
+}
+
+function getUncachedImages(imageIds, fit, fitImageList){
+  const missingImages = [];
+
+  if(fitImageList && fitImageList.length > 0){
+    imageIds.forEach(id => {
+      if(!fitImageList.includes(id)){
+        missingImages.push(id);
+      }
+    });
+    return missingImages;
+  }
+
+  return imageIds;
+}
+
+function splitNewAndFailed(values){
+  const newImages = [];
+  const failedImages = [];
+
+  values.forEach(item => {
+    if(item.status){
+      newImages.push(item.id);
+    } else {
+      failedImages.push(item.id);
+    }
+  })
+
+  return {
+    new: newImages,
+    failed: failedImages
+  }
+}
+
+function shareCheck(share, imagePath){
+  if(share === 'twitter'){
+    barcode.postTwitter('I am a test tweet', imagePath);
+  }
+}
+
 module.exports = {
   createHash,
   createConfig,
@@ -222,5 +358,7 @@ module.exports = {
   postTwitter,
   getImagePromises,
   getDownloadPromise,
-  createStitchedImage
+  createStitchedImage,
+  todaysParams,
+  generateAndSendBarcode
 };

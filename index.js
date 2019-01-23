@@ -8,7 +8,7 @@ const express = require("express");
 const path = require("path");
 const app = express();
 const barcode = require("./routes/barcode");
-const bot = require('./helpers/bot').init();
+const bot = require('./modules/Bot');
 
 if (process.env.NODE_ENV !== 'production') require('dotenv').config();
 
@@ -50,6 +50,7 @@ if (!PORT) {
 
 const server = app.listen(PORT, function() {
   console.log("Server is listening on port", PORT);
+  bot.init();
 });
 
 module.exports = server;
