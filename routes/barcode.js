@@ -5,6 +5,7 @@ const time = require('../helpers/time');
 const valid = require('../helpers/validation');
 const barcode = require('../modules/Barcode');
 const queue = require('../helpers/responseQueue');
+const DelayedResponse = require('http-delayed-response');
 
 // barf on startup if these folders are not specified in env or set up
 const ORIENTATIONS  = ['v', 'h'];
@@ -73,6 +74,8 @@ router.get('/', async (req, res) => {
   if(validation.length != 0){
     return res.json({ errors: validation });
   }
+
+  const keepAlive = new DelayedResponse(req, res);
   
   try {
     const params = { width, height, dateFrom, dateTo, timeFrom, timeTo, orientation, fit, order, sort, share };
@@ -84,6 +87,7 @@ router.get('/', async (req, res) => {
       finalFilepath,
       hash,
       res,
+      keepAlive,
       callback: barcode.generateAndSendBarcode
     });
 

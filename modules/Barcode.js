@@ -2,7 +2,7 @@ const https = require('https');
 const fs = require('fs');
 const crypto = require('crypto');
 const twitter = require('twitter');
-const graphicsmagick = require("gm");
+const graphicsmagick = require('gm');
 const sharp = require('sharp');
 const rgbHex = require('rgb-hex');
 const colorSort = require('color-sort');
@@ -235,7 +235,7 @@ function todaysParams(){
   };
 }
 
-async function generateAndSendBarcode(params, finalFilepath, hash, res) {
+async function generateAndSendBarcode(params, finalFilepath, hash, res, keepAlive = null) {
     if(cache.get(hash) && res){
       res.writeHead(200, {'Content-Type': 'image/jpg' });
       return res.end(fs.readFileSync(finalFilepath), 'binary');
@@ -263,6 +263,10 @@ async function generateAndSendBarcode(params, finalFilepath, hash, res) {
     const uncachedImagePaths = createImagePaths(config, uncachedImages);
     const uncachedImagePromises = getImagePromises(config, uncachedImagePaths);
 
+    if(keepAlive) {
+      keepAlive.wait();
+    }
+
     return Promise.all(uncachedImagePromises)
       .then(values => splitNewAndFailed(values))
       .then(async promiseResults => {
@@ -288,13 +292,20 @@ async function generateAndSendBarcode(params, finalFilepath, hash, res) {
           .then(() => {
             if(res) {  
               res.writeHead(200, {'Content-Type': 'image/jpg' });
-              res.end(fs.readFileSync(config.paths.output), 'binary'); 
+              res.end(fs.readFileSync(config.paths.output), 'binary');
+              if(keepAlive) {
+                keepAlive.end();
+              }
             }
             cache.set(hash, finalFilepath);
             return hash;
           })
           .catch((err) => {
             if(res) {
+              if(keepAlive) {
+                keepAlive.end();
+              }
+
               return res.json({ error: `finalImage: ${err}` }); 
             }
             return undefined;
@@ -303,6 +314,10 @@ async function generateAndSendBarcode(params, finalFilepath, hash, res) {
       })
       .catch((err) => {
         if(res) {
+          if(keepAlive) {
+            keepAlive.end();
+          }
+              
           return res.json({
             error: 'Issue downloading all images',
             message: `${err}`

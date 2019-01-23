@@ -37,6 +37,7 @@
     "fs": "0.0.1-security",
     "gm": "^1.23.1",
     "hbs": "^4.0.1",
+    "http-delayed-response": "0.0.4",
     "image-average-color": "^1.0.0",
     "is-uuid": "^1.0.2",
     "md5": "^2.2.1",
@@ -48,11 +49,11 @@
     "rgb-hex": "^2.1.0",
     "rss": "^1.2.1",
     "sharp": "^0.21.3",
+    "snyk": "^1.116.4",
     "striptags": "^2.1.1",
     "twitter": "^1.7.1",
     "uuid": "^3.0.1",
-    "xml2js": "^0.4.17",
-    "snyk": "^1.116.4"
+    "xml2js": "^0.4.17"
   },
   "devDependencies": {
     "nock": "^9.2.6",

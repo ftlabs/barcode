@@ -15,7 +15,7 @@ async function processQueue() {
 
 		let currentItem = queue.shift();
 		setQueueStatus(true);
-		await currentItem.callback(currentItem.params, currentItem.finalFilepath, currentItem.hash, currentItem.res);
+		await currentItem.callback(currentItem.params, currentItem.finalFilepath, currentItem.hash, currentItem.res, currentItem.keepAlive);
 
 		setQueueStatus(false);
 		processQueue();
