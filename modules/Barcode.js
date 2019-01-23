@@ -220,37 +220,24 @@ function orderByHex(imageData){
   return orderedImageIds;
 }
 
-function todaysQueryString(){
-  return createURLQueryString({
+function todaysParams(){
+  return {
     width: 1024,
     height: 768,
-    dateFrom: date(-1),
+    dateFrom: today(-1),
+    dateTo: today(),
     timeFrom: '00:00:00',
-    dateTo: today,
     timeTo: '00:00:00',
     orientation: 'v',
     fit: 'fill',
     order: 'colour',
-    sort: 'asc'
-  });
-}
-
-function createURLQueryString(elements){
-  const width = (elements.width) ? elements.width : 1024;
-  const height = (elements.height) ? elements.height : 768;
-  const dateFrom = (elements.dateFrom) ? elements.dateFrom : date(-1);
-  const dateTo = (elements.dateTo) ? elements.dateTo : date();
-  const timeFrom = (elements.timeFrom) ? elements.timeFrom : '00:00:00';
-  const timeTo = (elements.timeTo) ? elements.timeTo : '00:00:00';
-  const orientation = (elements.orientation) ? elements.orientation : 'v';
-  const fit = (elements.fit) ? elements.fit : 'fill';
-  const order = (elements.order) ? elements.order : 'colour';
-  const sort = (elements.sort) ? elements.sort : 'asc';
-  return `width=${width}&height=${height}&dateFrom=${dateFrom}&timeFrom=${timeFrom}&dateTo=${dateTo}&timeTo=${timeTo}&orientation=${orientation}&fit=${fit}&order=${order}&sort=${sort}`;
+    sort: 'asc',
+    share: ''
+  };
 }
 
 async function generateAndSendBarcode(params, finalFilepath, hash, res) {
-    if(cache.get(hash)){
+    if(cache.get(hash) && res){
       res.writeHead(200, {'Content-Type': 'image/jpg' });
       return res.end(fs.readFileSync(finalFilepath), 'binary');
     }
@@ -265,7 +252,11 @@ async function generateAndSendBarcode(params, finalFilepath, hash, res) {
     const allImageIds = await article.getImageIdsFromDateRange(params.dateFrom, params.dateTo, params.timeFrom, params.timeTo);
 
     if(allImageIds.length <= 0){
-      return res.json({ error: `No images found with the search parameters, please adjust your date range and try again` });
+      if(res) {
+        return res.json({ error: `No images found with the search parameters, please adjust your date range and try again` }); 
+      }
+      
+      return undefined;
     }
 
     const config = createConfig(params.orientation, params.fit, allImageIds.length, params.width, params.height, paths, params.order, params.sort);
@@ -275,7 +266,7 @@ async function generateAndSendBarcode(params, finalFilepath, hash, res) {
 
     return Promise.all(uncachedImagePromises)
       .then(values => splitNewAndFailed(values))
-      .then(promiseResults => {
+      .then(async promiseResults => {
 
         //add new images to cache
         const fitImageList = cache.get(paths.imageFolder);
@@ -293,24 +284,32 @@ async function generateAndSendBarcode(params, finalFilepath, hash, res) {
         });
 
         //stitch new image
-        createStitchedImage(config, allImageIds)
+        return await createStitchedImage(config, allImageIds)
           .then(() => shareCheck(params.share, config.paths.output))
           .then(() => {
-            res.writeHead(200, {'Content-Type': 'image/jpg' });
-            res.end(fs.readFileSync(config.paths.output), 'binary');
+            if(res) {  
+              res.writeHead(200, {'Content-Type': 'image/jpg' });
+              res.end(fs.readFileSync(config.paths.output), 'binary'); 
+            }
             cache.set(hash, finalFilepath);
-            return;
+            return hash;
           })
           .catch((err) => {
-            return res.json({ error: `finalImage: ${err}` });
+            if(res) {
+              return res.json({ error: `finalImage: ${err}` }); 
+            }
+            return undefined;
           });
 
       })
       .catch((err) => {
-        return res.json({
-          error: 'Issue downloading all images',
-          message: `${err}`
-        });
+        if(res) {
+          return res.json({
+            error: 'Issue downloading all images',
+            message: `${err}`
+          });
+        }
+        return undefined;
       });
 }
 
@@ -361,7 +360,6 @@ module.exports = {
   getImagePromises,
   getDownloadPromise,
   createStitchedImage,
-  todaysQueryString,
-  createURLQueryString,
+  todaysParams,
   generateAndSendBarcode
 };

@@ -75,8 +75,10 @@ router.get('/', async (req, res) => {
   }
   
   try {
-    const params = {width, height, dateFrom, dateTo, timeFrom, timeTo, orientation, fit, order, sort, share };
+    const params = { width, height, dateFrom, dateTo, timeFrom, timeTo, orientation, fit, order, sort, share };
     const hash = barcode.createHash(params);
+    console.log('REQ:', params);
+    console.log('HASH::', hash);
     const finalFilepath = `${process.env.RESULT_FOLDER}/output_${hash}.jpg`;
 
     return queue.add({
