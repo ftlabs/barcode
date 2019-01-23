@@ -1,5 +1,5 @@
 const https = require('https');
-const filesystem = require("fs");
+const fs = require('fs');
 const crypto = require('crypto');
 const twitter = require('twitter');
 const graphicsmagick = require("gm");
@@ -7,7 +7,6 @@ const sharp = require('sharp');
 const rgbHex = require('rgb-hex');
 const colorSort = require('color-sort');
 const average = require('image-average-color');
-const fs = require('fs');
 
 const { today } = require('../helpers/utils');
 const cache = require('../helpers/cache');
@@ -70,7 +69,7 @@ function postTwitter(message, mediaPath){
     access_token_secret: process.env.TWITTER_ACCESS_TOKEN_SECRET
   });
 
-  const data = filesystem.readFileSync(mediaPath);
+  const data = fs.readFileSync(mediaPath);
 
   client.post('media/upload', {media: data}, function(error, media, response) {
     if (!error) {
@@ -115,7 +114,7 @@ function getDownloadPromise(config, imageItem) {
     const resizeTransform = sharp().resize(width, height, { fit: fit });
 
     https.get(imageItem.path, downloadStream => {
-      let writeStream = filesystem.createWriteStream(destination);
+      let writeStream = fs.createWriteStream(destination);
       downloadStream.pipe(resizeTransform).pipe(writeStream);
 
       const winState = { id: imageItem.id, status: 1 };
