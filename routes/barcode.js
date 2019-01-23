@@ -76,7 +76,7 @@ router.get('/', async (req, res) => {
   }
 
   const keepAlive = new DelayedResponse(req, res);
-  
+
   try {
     const params = { width, height, dateFrom, dateTo, timeFrom, timeTo, orientation, fit, order, sort, share };
     const hash = barcode.createHash(params);
