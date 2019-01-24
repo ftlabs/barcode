@@ -1,31 +1,24 @@
+const qAccessFlag = new( require('./mutexFlag') );
 const queue = [];
-let queueIsProcessing = false;
 
 function addItemToQueue(item) {
 	queue.push(item);
-
-	if(!queueIsProcessing) {
-		processQueue();
-	}
+	processQueue();
 }
 
 async function processQueue() {
-	if(queue.length > 0 && !queueIsProcessing) {
+	if( qAccessFlag.isSetOnByMe() ) {
 		console.log(`responseQueueLength=${queue.length}`);
-
-		let currentItem = queue.shift();
-		setQueueStatus(true);
-		await currentItem.callback(currentItem.params, currentItem.finalFilepath, currentItem.hash, currentItem.res);
-
-		setQueueStatus(false);
-		processQueue();
+		if(queue.length > 0){
+			const currentItem = queue.shift();
+			await currentItem.callback(currentItem.params, currentItem.finalFilepath, currentItem.hash, currentItem.res);
+			qAccessFlag.setToOff();
+			processQueue();
+		} else {
+			qAccessFlag.setToOff();
+		}
 	}
 }
-
-function setQueueStatus(status = true) {
-	queueIsProcessing = status;
-}
-
 
 module.exports = {
 	add: addItemToQueue
