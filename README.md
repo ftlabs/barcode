@@ -156,7 +156,7 @@ ffmpeg -y -r 1 -i ./sort_colour/%03d.jpg -r 10 -vf scale=640:480 ./sort_colour/o
 ```
 ---
 
-**Note** : the fps could be higher, however it does create a very rapid gif with lots of colour changes - please avoid giving yourself a headache or any epilepsy users that may be in you vicinty*
+**Note** : the fps could be higher, however it does create a very rapid gif with lots of colour changes - please avoid giving yourself a headache and mind epileptic users that may be in your vicinity*
 
 
 
