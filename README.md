@@ -134,7 +134,7 @@ A list of some interesting expansions for the project:
 ### Gif generation
 
 I wondered what an animated series of Barcode images would look like.
-So before building a full animation request feature I used [ffmpeg] locally to generate some example gifs.
+So before building a full animation request feature I used [ffmpeg](https://ffmpeg.org/ffmpeg.html) locally to generate some example gifs.
 
 ---
 
