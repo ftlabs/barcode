@@ -131,6 +131,35 @@ A list of some interesting expansions for the project:
 + Look into setting cache expiry
 
 
+### Gif generation
+
+I wondered what an animated series of Barcode images would look like.
+So before building a full animation request feature I used [ffmpeg] locally to generate some example gifs.
+
+---
+
+_9 images @ 1fps, images sorted by publish date_
+
+![Alt text](./docs/gif_feature/sort_published.gif?raw=true "9 images @ 1fps, images sorted by publish date")
+
+```
+ffmpeg -y -r 1 -i ./sort_published/%03d.jpg -r 10 -vf scale=640:480 ./sort_published/output.gif
+```
+---
+
+_9 images @ 1fps, images sorted by colour_
+
+![Alt text](./docs/gif_feature/sort_colour.gif?raw=true "9 images @ 1fps, images sorted by colour")
+
+```
+ffmpeg -y -r 1 -i ./sort_colour/%03d.jpg -r 10 -vf scale=640:480 ./sort_colour/output.gif
+```
+---
+
+**Note** : the fps could be higher, however it does create a very rapid gif with lots of colour changes - please avoid giving yourself a headache or any epilepsy users that may be in you vicinty*
+
+
+
 ## Lessons learned
 
 ### Creating stretched images
