@@ -1,97 +1,261 @@
 <!DOCTYPE html>
-<html lang="en"></html>
+<html lang="en">
   <head>
+    <meta charset="UTF-8">
     <title>FT News Barcode [Beta]</title>
-    <meta charset="utf-8" name="description" content="Grabs a selection of FT article images and squashes them into one image, look similar to a colourful barcode">
-    <link rel="stylesheet" href="https://build.origami.ft.com/v2/bundles/css?modules=o-fonts@^3.0.4,o-buttons@^5.10.3,o-forms@^5.2.4">
+    <meta name="description" content="Grabs a selection of FT article images and squashes them into one image, look similar to a colourful barcode">
+    <link rel="stylesheet" href="https://build.origami.ft.com/v2/bundles/css?modules=o-fonts@^3.0.4,o-syntax-highlight@^1.5.2,o-buttons@^5.10.3,o-grid@^4.4.4,o-forms@^5.2.4,o-tabs@^4.2.0,o-layout@^2.2.5&brand=internal">
     <link rel="stylesheet" href="/static/css/style.css">
   </head>
   <body>
-    <h1>FT News Barcode [Beta]</h1>
-    <h2>API URL generator</h2>
-    <form>
-      <span>/barcode</span>
-      <span>?width=</span>
-      <input type="number" id="width" name="width" min="100" max="3000" placeholder="1024" value="1024"/>
-      <span>&amp;height=</span>
-      <input type="number" id="height" name="height" min="100" max="3000" placeholder="768" value="768"/>
-      <span>&amp;dateFrom=</span>
-      <input type="date" id="dateFrom" name="dateFrom" min="2018-01-01" max="2018-11-14" placeholder="2018-11-13" value="2018-11-13">
-      <span>&amp;timeFrom=</span>
-      <input type="time" id="timeFrom" name="dateFrom" min="00:00:00" max="23:59:59" placeholder="00:00" value="00:00">
-      <span>&amp;dateTo=</span>
-      <input type="date" id="dateTo" name="dateTo" min="2018-01-01" max="2018-11-14"  placeholder="2018-11-14" value="2018-11-14">
-      <span>&amp;timeTo=</span>
-      <input type="time" id="timeTo" name="dateTo" min="00:00:00" max="23:59:59"  placeholder="00:00" value="00:00">
-      <span>&amp;orientation=</span>
-      <select id="orientation" name="orientation">
-        <option value="h">horizontal</option>
-        <option value="v" selected>vertical</option>
-      </select>
-      <span>&amp;fit=</span>
-      <select id="fit" name="fit">
-        <option value="cover">cover</option>
-        <option value="fill" selected>fill</option>
-        <option value="solid">solid</option>
-      </select>
-      <span>&amp;order=</span>
-      <select id="order" name="order">
-        <option value="published">published</option>
-        <option value="colour" selected>colour</option>
-      </select>
-      <span>&amp;sort=</span>
-      <select id="sort" name="sort">
-        <option value="asc" selected>Ascending</option>
-        <option value="desc">Descending</option>
-      </select>
-      <br />
-      <a id="queryBuilderLink" target="_blank" href="">/barcode</a>
-      <p>
-        <b>* Please note, during this beta phase initial requests for images may be slower, repeat requests are cached</b>
-      </p>
-    </form>
-    <h2>Endpoints for Articles</h2>
-    <p>
-      GET /barcode, returns Image
-    </p>
-    <p>
-      Optional parameters
-    </p>
-    <ul>
-      <li>
-        <b>width</b> <i>integer</i> : width of returned image - <i>(1024 default)</i>
-      </li>
-      <li>
-        <b>height</b> <i>integer</i> : height of returned image - <i>(768 default)</i>
-      </li>
-      <li>
-        <b>dateFrom</b> <i>date</i> : date to start image selection from, yyyy/mm/dd format- <i>(default yesterdays date)</i> 
-      </li>
-      <li>
-        <b>timeFrom</b> <i>time</i> : time to start image selection from, hh/mm/ss format- <i>(default 00:00:00)</i> 
-      </li>
-      <li>
-        <b>dateTo</b> <i>date</i> : date to end image selection on, yyyy/mm/dd format- <i>(default todays date)</i> 
-      </li>
-      <li>
-        <b>timeTo</b> <i>time</i> : time to end image selection on, hh/mm/ss format- <i>(default 00:00:00)</i> 
-      </li>
-      <li>
-        <b>orientation</b> <i>string</i> : stack images horizontally or vertically - <i>(v default)</i>
-      </li>
-      <li>
-        <b>fit</b> <i>string</i> : gets images as masks, squashed or solid colours- <i>(fill default)</i>
-      </li>
-      <li>
-        <b>order</b> <i>string</i> : display order of images - <i>(colour default)</i>
-      </li>
-      <li>
-        <b>sort</b> <i>string</i> : sort order by asc or desc - <i>(asc default)</i>
-      </li>
-    </ul>
-    <p>
-      e.g. <a target="_blank" href="/barcode?width=1024&height=768&dateFrom=2018-11-13&timeFrom=00:00:00&dateTo=2018-11-14&timeTo=00:00:00&orientation=v&fit=fill&order=colour&sort=asc">/barcode?width=1024&amp;height=768&amp;dateFrom=2018-11-13&amp;timeFrom=00:00:00&amp;dateTo=2018-11-14&amp;timeTo=00:00:00&amp;orientation=v&amp;fit=fill&amp;order=colour&amp;sort=asc</a>
-    </p>
+    <div class="o-layout" data-o-component="o-layout">
+      <header class="o-header-services o-layout__header" data-o-component="o-header">
+
+        <div class="o-header-services__top o-header-services__container">
+          <div class="o-header-services__ftlogo"></div>
+          <div class="o-header-services__title">
+            <h1 class="o-header-services__product-name">
+              <a href="/">Barcode</a>
+            </h1>
+            <span class="o-header-subrand__product-tagline">Generator</span>
+          </div>
+        </div>
+
+        <nav class="o-header-services__primary-nav">
+          <div class="o-header-services__container">
+            <ul class="o-layout__primary-nav o-header-services__nav-list">
+              <li class="o-header-services__nav-item">
+                <a class="o-header-services__nav-link o-header-services__nav-link--selected" href="/">
+                  Generator
+                </a>
+              </li>
+            </ul>
+          </div>
+        </nav>
+
+      </header>
+
+      <div class="o-layout__sidebar">
+        <p>
+          Repeat requests are cached.
+        </p>
+        <p>
+          <b>Please note, during this beta phase initial requests for images may be slower.</b>
+        </p>
+        <p>
+          Example image URL:
+        </p>
+        <p>
+          <a target="_blank" href="/barcode?&dateFrom=2018-11-13&dateTo=2018-11-14&orientation=v&fit=fill&order=colour&sort=asc">/barcode?dateFrom=2018-11-13&amp;dateTo=2018-11-14&amp;orientation=v&amp;fit=fill&amp;order=colour&amp;sort=asc</a>
+        </p>
+      </div>
+
+      <div class="o-layout__main" data-o-component="o-syntax-highlight">
+
+        <h3>URL Generator</h3>
+
+        <div class="o-grid-container o-grid-container--bleed">
+          <div class="o-grid-row o-grid-row--compact">
+            <div class="url-box">
+              <a id="queryBuilderLink" target="_blank" href="">/barcode</a>
+            </div>
+          </div>
+          <div class="o-grid-row o-grid-row--compact">
+            <div data-o-grid-colspan="6">
+              <div class="o-forms">
+                <label for="width" class="o-forms__label">Width</label>
+                <small class="o-forms__additional-info">
+                  <i>(default 1024)</i>
+                </small>
+                <input type="number" id="width" name="width" min="100" max="3000" placeholder="1024" value="1024" class="o-forms__text">
+              </div>
+            </div>
+            <div data-o-grid-colspan="6">
+              <div class="o-forms">
+                <label for="height" class="o-forms__label">Height</label>
+                <small class="o-forms__additional-info">
+                  <i>(default 768)</i>
+                </small>
+                <input type="number" id="height" name="height" min="100" max="3000" placeholder="768" value="768" value="" class="o-forms__text">
+              </div>
+            </div>
+          </div>
+          <div class="o-grid-row o-grid-row--compact">
+            <div data-o-grid-colspan="6">
+              <div class="o-forms">
+                <label for="dateFrom" class="o-forms__label">Date From</label>
+                <small class="o-forms__additional-info">
+                  yyyy/mm/dd format- (default yesterdays date)
+                </small>
+                <input type="date" id="dateFrom" name="dateFrom" min="2018-01-01" max="2018-11-14" placeholder="2018-11-13" value="2018-11-13" class="o-forms__text">
+              </div>
+            </div>
+            <div data-o-grid-colspan="6">
+              <div class="o-forms">
+                <label for="timeFrom" class="o-forms__label">Time From</label>
+                <small class="o-forms__additional-info">
+                  hh/mm/ss format- (default 00:00:00)
+                </small>
+                <input type="time" id="timeFrom" name="timeFrom" min="00:00:00" max="23:59:59" placeholder="00:00" value="00:00" class="o-forms__text">
+              </div>
+            </div>
+          </div>
+          <div class="o-grid-row o-grid-row--compact">
+            <div data-o-grid-colspan="6">
+              <div class="o-forms">
+                <label for="dateTo" class="o-forms__label">Date To</label>
+                <small class="o-forms__additional-info">
+                  yyyy/mm/dd format- (default todays date)
+                </small>
+                <input type="date" id="dateTo" name="dateTo" min="2018-01-01" max="2018-11-14"  placeholder="2018-11-14" value="2018-11-14" class="o-forms__text">
+              </div>
+            </div>
+            <div data-o-grid-colspan="6">
+              <div class="o-forms">
+                <label for="timeTo" class="o-forms__label">Time To</label>
+                <small class="o-forms__additional-info">
+                  hh/mm/ss format- (default 00:00:00)
+                </small>
+                <input type="time" id="timeTo" name="timeTo" min="00:00:00" max="23:59:59"  placeholder="00:00" value="00:00" class="o-forms__text">
+              </div>
+            </div>
+          </div>
+          <div class="o-grid-row o-grid-row--compact">
+            <div data-o-grid-colspan="12">
+              <fieldset class="o-forms o-forms--wide">
+                <legend class="o-forms__label">Orientation</legend>
+                <small class="o-forms__additional-info">
+                  Stacks images horizontally or vertically (<i>vertically by default</i>)
+                </small>
+                <div class="o-forms__group o-forms__group--inline">
+                  <input type="radio" id="orientation-vertical" name="orientation" value="v" class="o-forms__radio" checked="">
+                  <label for="orientation-vertical" class="o-forms__label">vertical</label>
+                  <input type="radio" id="orientation-horizontal" name="orientation" value="h" class="o-forms__radio">
+                  <label for="orientation-horizontal" class="o-forms__label">horizontal</label>
+                </div>
+              </fieldset>
+            </div>
+          </div>
+          <div class="o-grid-row o-grid-row--compact">
+            <div data-o-grid-colspan="12">
+              <fieldset class="o-forms o-forms--wide">
+                <legend class="o-forms__label">Fit</legend>
+                <small class="o-forms__additional-info">
+                  Gets images as masks, squashed or solid colours - <i>(fill default)</i>
+                </small>
+                <div class="o-forms__group o-forms__group--inline">
+                  <input type="radio" id="fit-fill" name="fit" value="fill" class="o-forms__radio" checked="">
+                  <label for="fit-fill" class="o-forms__label">fill</label>
+                  <input type="radio" id="fit-cover" name="fit" value="cover" class="o-forms__radio">
+                  <label for="fit-cover" class="o-forms__label">cover</label>
+                  <input type="radio" id="fit-solid" name="fit" value="solid" class="o-forms__radio">
+                  <label for="fit-solid" class="o-forms__label">solid</label>
+                </div>
+              </fieldset>
+            </div>
+          </div>
+          <div class="o-grid-row o-grid-row--compact">
+            <div data-o-grid-colspan="12">
+              <fieldset class="o-forms o-forms--wide">
+                <legend class="o-forms__label">Order</legend>
+                <small class="o-forms__additional-info">
+                  Display order of images - <i>(colour default)</i>
+                </small>
+                <div class="o-forms__group o-forms__group--inline">
+                  <input type="radio" id="order-published" name="order" value="published" class="o-forms__radio" checked="">
+                  <label for="order-published" class="o-forms__label">published</label>
+                  <input type="radio" id="order-colour" name="order" value="colour" class="o-forms__radio">
+                  <label for="order-colour" class="o-forms__label">colour</label>
+                </div>
+              </fieldset>
+            </div>
+          </div>
+          <div class="o-grid-row o-grid-row--compact">
+            <div data-o-grid-colspan="12">
+              <fieldset class="o-forms o-forms--wide">
+                <legend class="o-forms__label">Sort</legend>
+                <small class="o-forms__additional-info">
+                  Sort order by asc or desc - <i>(asc default)</i>
+                </small>
+                <div class="o-forms__group o-forms__group--inline">
+                  <input type="radio" id="sort-asc" name="sort" value="asc" class="o-forms__radio" checked="">
+                  <label for="sort-asc" class="o-forms__label">ascending</label>
+                  <input type="radio" id="sort-desc" name="sort" value="desc" class="o-forms__radio">
+                  <label for="sort-desc" class="o-forms__label">descending</label>
+                </div>
+              </fieldset>
+            </div>
+          </div>
+        </div>
+
+        
+
+        
+
+        <!--
+
+        <form>
+          <span>/barcode</span>
+          <span>?width=</span>
+          <input type="number" id="width" name="width" min="100" max="3000" placeholder="1024" value="1024"/>
+          <span>&amp;height=</span>
+          <input type="number" id="height" name="height" min="100" max="3000" placeholder="768" value="768"/>
+          <span>&amp;dateFrom=</span>
+          <input type="date" id="dateFrom" name="dateFrom" min="2018-01-01" max="2018-11-14" placeholder="2018-11-13" value="2018-11-13">
+          <span>&amp;timeFrom=</span>
+          <input type="time" id="timeFrom" name="dateFrom" min="00:00:00" max="23:59:59" placeholder="00:00" value="00:00">
+          <span>&amp;dateTo=</span>
+          <input type="date" id="dateTo" name="dateTo" min="2018-01-01" max="2018-11-14"  placeholder="2018-11-14" value="2018-11-14">
+          <span>&amp;timeTo=</span>
+          <input type="time" id="timeTo" name="dateTo" min="00:00:00" max="23:59:59"  placeholder="00:00" value="00:00">
+          <span>&amp;orientation=</span>
+          <select id="orientation" name="orientation">
+            <option value="h">horizontal</option>
+            <option value="v" selected>vertical</option>
+          </select>
+          <span>&amp;fit=</span>
+          <select id="fit" name="fit">
+            <option value="cover">cover</option>
+            <option value="fill" selected>fill</option>
+            <option value="solid">solid</option>
+          </select>
+          <span>&amp;order=</span>
+          <select id="order" name="order">
+            <option value="published">published</option>
+            <option value="colour" selected>colour</option>
+          </select>
+          <span>&amp;sort=</span>
+          <select id="sort" name="sort">
+            <option value="asc" selected>Ascending</option>
+            <option value="desc">Descending</option>
+          </select>
+        </form>
+        -->
+    
+      </div>
+
+      <footer class="o-layout__footer o-footer-services">
+        <div class="o-footer-services__container">
+          <div class="o-footer-services__wrapper o-footer-services__wrapper--top">
+            <p class="o-footer-services__logo">Barcode</p>
+            <a class="o-footer-services__icon-link o-footer-services__icon-link--github" href="https://github.com/ftlabs/barcode">View project on GitHub</a>
+            <a class="o-footer-services__icon-link o-footer-services__icon-link--slack" href="https://slack.com/messages/ftlabs/">#ftlabs</a>
+            <p class="o-footer-services__content">Help or advice can be found here <a href="mailto:ftlabs@ft.com">ftlabs@ft.com</a></p>
+          </div>
+        </div>
+        <div class="o-footer-services__container">
+          <div class="o-footer-services__wrapper o-footer-services__wrapper--legal">
+            <div class="o-footer-services__links">
+            <a href="http://help.ft.com/help/legal-privacy/cookies/">Cookies</a>
+            <a href="http://help.ft.com/help/legal-privacy/copyright/copyright-policy/">Copyright</a>
+            <a href="http://help.ft.com/help/legal-privacy/privacy/" class="o-footer-services__bulletted-link">Privacy</a>
+            <a href="http://help.ft.com/help/legal-privacy/terms-conditions">Terms &amp; Conditions</a>
+          </div>
+          <p><span>&#xA9; THE FINANCIAL TIMES LTD 2018.</span> FT and &apos;Financial Times&apos; are trademarks of The Financial Times Ltd.</p>
+          </div>
+        </div>
+      </footer>
+    </div>
     <script src="/static/js/script.js"></script>
   </body>
 </html>

@@ -1,13 +1,28 @@
 body {
   background: #fff1e5;
-  font-family: 'MetricWeb', sans-serif;
 }
-h1,
-h2 {
-  font-family: 'FinancierDisplayWeb', serif;
-  text-transform: capitalize;
+
+pre {
+  overflow-x: auto;
+  white-space: pre-wrap;
+  white-space: -moz-pre-wrap;
+  white-space: -pre-wrap;
+  white-space: -o-pre-wrap;
+  word-wrap: break-word;
 }
-h2 {
-  font-family: 'MetricWeb', sans-serif;
-  font-size: 18px;
+
+.o-grid-container--bleed {
+  margin: 0;
+}
+
+.o-layout__sidebar {
+  word-break: break-word;
+}
+
+.url-box {
+  display: block;
+  width: 100%;
+  background: #f2f2f2;
+  padding: 20px;
+  margin-bottom: 15px;
 }
