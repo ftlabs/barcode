@@ -22,6 +22,7 @@ RESULT_FOLDER=downloads/results # path to folder for final combined image storag
 SLACK_TOKEN= # slack bot token 
 SLACK_CHANNEL= # slack channel to post to (the bot must be a member of the channel)
 APP_URL= # url of the hosted daily barcode (use ngrok for local testing)
+SCHEDULE= #a CSV of integers between 0 & 23 (can be absent/empty)
 ```
 
 Install nodemon globally by running `npm install -g nodemon`.
