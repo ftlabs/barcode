@@ -1,10 +1,11 @@
+const { processEnv } = require('./utils');
 let lastSentUpdate = 0;
-const schedule = [10];
+const schedule = processEnv('SCHEDULE', {default: '' } ).split(',');
 
 function canSend() {
 	const checkTime = new Date().getHours();
 	const isScheduled = schedule.find(time => {
-		return time === checkTime;
+		return parseInt(time) === checkTime;
 	});
 	
 	if(isScheduled && lastSentUpdate !== checkTime) {

@@ -1,6 +1,4 @@
-const dotenv = require("dotenv").config({
-  silent: process.env.NODE_ENVIRONMENT === "production"
-});
+if (process.env.NODE_ENV !== 'production') require('dotenv').config();
 
 const package = require("./package.json");
 const debug = require("debug")(`${package.name}:index`);
@@ -9,8 +7,6 @@ const path = require("path");
 const app = express();
 const barcode = require("./routes/barcode");
 const bot = require('./modules/Bot');
-
-if (process.env.NODE_ENV !== 'production') require('dotenv').config();
 
 // view engine setup
 app.set("views", path.join(__dirname, "views"));
