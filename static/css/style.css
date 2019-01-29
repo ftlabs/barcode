@@ -1,13 +1,55 @@
 body {
   background: #fff1e5;
-  font-family: 'MetricWeb', sans-serif;
 }
-h1,
-h2 {
-  font-family: 'FinancierDisplayWeb', serif;
-  text-transform: capitalize;
+
+pre {
+  overflow-x: auto;
+  white-space: pre-wrap;
+  white-space: -moz-pre-wrap;
+  white-space: -pre-wrap;
+  white-space: -o-pre-wrap;
+  word-wrap: break-word;
 }
-h2 {
-  font-family: 'MetricWeb', sans-serif;
-  font-size: 18px;
+
+.o-grid-container--bleed {
+  margin: 0;
+}
+
+.o-layout__sidebar {
+  word-break: break-word;
+}
+
+.ftlabslogo {
+  background-image: url("../img/ftlabs-icon.png");
+  width: 24px;
+  height: 32px;
+}
+
+.sidebar-content {
+  border-right: 2px solid #0d7680;
+  padding-right: 20px;
+}
+
+.sidebar-content img {
+  width: 100%;
+}
+
+.sidebar-content a {
+  font-size: 13px;
+  line-height: 0;
+}
+
+.url-box {
+  display: block;
+  width: 100%;
+  background: #f2f2f2;
+  padding: 20px;
+  margin-bottom: 15px;
+  word-break: break-all;
+}
+
+@media only screen and (max-width: 780px) {
+  .o-layout__sidebar {
+    display: none;
+  }
 }
