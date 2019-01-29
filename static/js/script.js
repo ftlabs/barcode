@@ -1,5 +1,4 @@
 var queryLink;
-var updateBtn;
 var inputs = [];
 var radios = [];
 var inputIds = [
@@ -45,13 +44,13 @@ function jumpToUrlBuilderLink(){
 
 function setInitalDates(){
   document.getElementById('dateFrom').value = date(-1);
-  document.getElementById('dateTo').value = date();
+  document.getElementById('dateTo').value = date(0);
 
   document.getElementById('dateFrom').max = date(-1);
-  document.getElementById('dateTo').max = date();
+  document.getElementById('dateTo').max = date(0);
 }
 
-function date(offset = 0) {
+function date(offset) {
 	var now = new Date();
 	
 	if(offset && offset != 0){
@@ -63,7 +62,7 @@ function date(offset = 0) {
     var d = now.getDate();
     var mm = m < 10 ? '0' + m : m;
     var dd = d < 10 ? '0' + d : d;
-    return `${y}-${mm}-${dd}`;
+    return y + '-' + mm + '-' + dd;
 }
 
 function getElements(ids){

@@ -19,7 +19,7 @@ pre {
   word-break: break-word;
 }
 
-.o-header-services__ftlogo.labs {
+.ftlabslogo {
   background-image: url("../img/ftlabs-icon.png");
   width: 24px;
   height: 32px;
@@ -36,7 +36,7 @@ pre {
 
 .sidebar-content a {
   font-size: 13px;
-  line-height: 0px;
+  line-height: 0;
 }
 
 .url-box {
