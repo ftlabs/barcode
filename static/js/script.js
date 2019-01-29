@@ -1,4 +1,5 @@
 var queryLink;
+var updateBtn;
 var inputs = [];
 var radios = [];
 var inputIds = [
@@ -20,11 +21,14 @@ document.addEventListener("DOMContentLoaded", init);
 
 function init(){
   queryLink	= document.getElementById('queryBuilderLink');
+  updateBtn	= document.getElementById('btn-view-barcode');
 
   inputs = getElements(inputIds);
   addInputListeners(inputs);
   radios = getElements(radioNames);
   addRadioListeners(radios);
+
+  updateBtn.addEventListener('click', jumpToUrlBuilderLink, false);
 
   updateUrlBuilderLink(inputs, radios);
 }
@@ -78,4 +82,8 @@ function updateUrlBuilderLink(){
 
   queryLink.href = str;
   queryLink.innerHTML = str;
+}
+
+function jumpToUrlBuilderLink(){
+  document.getElementById('url-box').scrollIntoView();
 }
