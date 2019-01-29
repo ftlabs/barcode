@@ -21,16 +21,50 @@ document.addEventListener("DOMContentLoaded", init);
 
 function init(){
   queryLink	= document.getElementById('queryBuilderLink');
-  updateBtn	= document.getElementById('btn-view-barcode');
 
+  setElements();
+  setUpdateBtn();
+  setInitalDates();
+  updateUrlBuilderLink(inputs, radios);
+}
+
+function setElements(){
   inputs = getElements(inputIds);
   addInputListeners(inputs);
   radios = getElements(radioNames);
   addRadioListeners(radios);
+}
 
+function setUpdateBtn(){
+  updateBtn	= document.getElementById('btn-view-barcode');
   updateBtn.addEventListener('click', jumpToUrlBuilderLink, false);
+}
 
-  updateUrlBuilderLink(inputs, radios);
+function jumpToUrlBuilderLink(){
+  document.getElementById('url-box').scrollIntoView();
+}
+
+function setInitalDates(){
+  document.getElementById('dateFrom').value = date(-1);
+  document.getElementById('dateTo').value = date();
+
+  document.getElementById('dateFrom').max = date(-1);
+  document.getElementById('dateTo').max = date();
+}
+
+function date(offset = 0) {
+	var now = new Date();
+	
+	if(offset && offset != 0){
+		now.setDate(now.getDate() + offset);
+	}
+
+    var y = now.getFullYear();
+    var m = now.getMonth() + 1;
+    var d = now.getDate();
+    var mm = m < 10 ? '0' + m : m;
+    var dd = d < 10 ? '0' + d : d;
+    return `${y}-${mm}-${dd}`;
 }
 
 function getElements(ids){
@@ -82,8 +116,4 @@ function updateUrlBuilderLink(){
 
   queryLink.href = str;
   queryLink.innerHTML = str;
-}
-
-function jumpToUrlBuilderLink(){
-  document.getElementById('url-box').scrollIntoView();
 }
