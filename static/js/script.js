@@ -63,7 +63,6 @@ function addRadioListeners(radios){
 }
 
 function updateUrlBuilderLink(){
-  console.log('foo');
   var widthVal = inputs.width.value;
   var heightVal = inputs.height.value;
   var dateFromVal = inputs.dateFrom.value;
