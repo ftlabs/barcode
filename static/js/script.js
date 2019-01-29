@@ -23,7 +23,7 @@ function init(){
   queryLink	= document.getElementById('queryBuilderLink');
 
   setElements();
-  setUpdateBtn();
+  setGoToUrlBtn();
   setInitalDates();
   updateUrlBuilderLink(inputs, radios);
 }
@@ -35,13 +35,12 @@ function setElements(){
   addRadioListeners(radios);
 }
 
-function setUpdateBtn(){
-  updateBtn	= document.getElementById('btn-view-barcode');
-  updateBtn.addEventListener('click', jumpToUrlBuilderLink, false);
+function setGoToUrlBtn(){
+  document.getElementById('btn-view-barcode').addEventListener('click', jumpToUrlBuilderLink, false);
 }
 
 function jumpToUrlBuilderLink(){
-  document.getElementById('url-box').scrollIntoView();
+  window.open(queryLink.href);
 }
 
 function setInitalDates(){
