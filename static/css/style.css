@@ -19,6 +19,12 @@ pre {
   word-break: break-word;
 }
 
+.o-header-services__ftlogo.labs {
+  background-image: url("../img/ftlabs-icon.png");
+  width: 24px;
+  height: 32px;
+}
+
 .url-box {
   display: block;
   width: 100%;
