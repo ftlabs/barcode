@@ -125,9 +125,9 @@ function getDownloadPromise(config, imageItem) {
         resolve(winState);
       });
 
-      writeStream.on('error', (err) => { reject(failStated); });
-      downloadStream.on('error', (err) => { reject(failState); });
-      resizeTransform.on('error', (err) => { reject(failState); });
+      writeStream.on('error', (err) => { resolve(failStated); });
+      downloadStream.on('error', (err) => { resolve(failState); });
+      resizeTransform.on('error', (err) => { resolve(failState); });
     });
   })
   .catch(function(err){
