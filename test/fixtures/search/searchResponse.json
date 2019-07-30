@@ -29,24 +29,23 @@
 						"aspectSet": "blogPost",
 						"modelVersion": "1",
 						"id": "c6b0ec93-f656-3681-8d2c-94def6f1f259",
-						"apiUrl":
-							"http://api.ft.com/content/items/v1/c6b0ec93-f656-3681-8d2c-94def6f1f259",
-						"title": { "title": "Brussels briefing: wayward commissioners" },
+						"apiUrl": "https://api.ft.com/content/items/v1/c6b0ec93-f656-3681-8d2c-94def6f1f259",
+						"title": {
+							"title": "Brussels briefing: wayward commissioners"
+						},
 						"lifecycle": {
 							"initialPublishDateTime": "2016-11-01T08:35:55Z",
 							"lastPublishDateTime": "2016-11-01T08:35:55Z"
 						},
 						"location": {
-							"uri":
-								"http://blogs.ft.com/brusselsblog/2016/11/01/brussels-briefing-wayward-commissioners/"
+							"uri": "http://blogs.ft.com/brusselsblog/2016/11/01/brussels-briefing-wayward-commissioners/"
 						}
 					},
 					{
 						"aspectSet": "article",
 						"modelVersion": "1",
 						"id": "dd2bfb4a-67cd-11e3-a905-00144feabdc0",
-						"apiUrl":
-							"http://api.ft.com/content/items/v1/dd2bfb4a-67cd-11e3-a905-00144feabdc0",
+						"apiUrl": "https://api.ft.com/content/items/v1/dd2bfb4a-67cd-11e3-a905-00144feabdc0",
 						"title": {
 							"title": "EU reaches breakthrough deal on tighter tobacco rules"
 						},
@@ -55,16 +54,14 @@
 							"lastPublishDateTime": "2013-12-18T17:32:27Z"
 						},
 						"location": {
-							"uri":
-								"http://www.ft.com/cms/s/0/dd2bfb4a-67cd-11e3-a905-00144feabdc0.html"
+							"uri": "http://www.ft.com/cms/s/0/dd2bfb4a-67cd-11e3-a905-00144feabdc0.html"
 						}
 					},
 					{
 						"aspectSet": "blogPost",
 						"modelVersion": "1",
 						"id": "342b83dc-3fd7-34db-82bc-a9bf69c21113",
-						"apiUrl":
-							"http://api.ft.com/content/items/v1/342b83dc-3fd7-34db-82bc-a9bf69c21113",
+						"apiUrl": "https://api.ft.com/content/items/v1/342b83dc-3fd7-34db-82bc-a9bf69c21113",
 						"title": {
 							"title": "Dalli and the bribery scandal that won't go away"
 						},
@@ -73,120 +70,115 @@
 							"lastPublishDateTime": "2013-04-30T16:09:55Z"
 						},
 						"location": {
-							"uri":
-								"http://blogs.ft.com/brusselsblog/2013/04/dalli-and-the-bribery-scandal-that-wont-go-away/"
+							"uri": "http://blogs.ft.com/brusselsblog/2013/04/dalli-and-the-bribery-scandal-that-wont-go-away/"
 						}
 					},
 					{
 						"aspectSet": "article",
 						"modelVersion": "1",
 						"id": "1724fc26-49fb-11e2-8002-00144feab49a",
-						"apiUrl":
-							"http://api.ft.com/content/items/v1/1724fc26-49fb-11e2-8002-00144feab49a",
-						"title": { "title": "EU plans to increase cigarette warnings" },
+						"apiUrl": "https://api.ft.com/content/items/v1/1724fc26-49fb-11e2-8002-00144feab49a",
+						"title": {
+							"title": "EU plans to increase cigarette warnings"
+						},
 						"lifecycle": {
 							"initialPublishDateTime": "2012-12-19T19:39:28Z",
 							"lastPublishDateTime": "2012-12-19T19:39:28Z"
 						},
 						"location": {
-							"uri":
-								"http://www.ft.com/cms/s/0/1724fc26-49fb-11e2-8002-00144feab49a.html"
+							"uri": "http://www.ft.com/cms/s/0/1724fc26-49fb-11e2-8002-00144feab49a.html"
 						}
 					},
 					{
 						"aspectSet": "article",
 						"modelVersion": "1",
 						"id": "14f24eb6-1df7-11e2-901e-00144feabdc0",
-						"apiUrl":
-							"http://api.ft.com/content/items/v1/14f24eb6-1df7-11e2-901e-00144feabdc0",
-						"title": { "title": "Dalli to sue over bribery scandal" },
+						"apiUrl": "https://api.ft.com/content/items/v1/14f24eb6-1df7-11e2-901e-00144feabdc0",
+						"title": {
+							"title": "Dalli to sue over bribery scandal"
+						},
 						"lifecycle": {
 							"initialPublishDateTime": "2012-10-24T21:34:33Z",
 							"lastPublishDateTime": "2012-10-24T21:34:33Z"
 						},
 						"location": {
-							"uri":
-								"http://www.ft.com/cms/s/0/14f24eb6-1df7-11e2-901e-00144feabdc0.html"
+							"uri": "http://www.ft.com/cms/s/0/14f24eb6-1df7-11e2-901e-00144feabdc0.html"
 						}
 					},
 					{
 						"aspectSet": "article",
 						"modelVersion": "1",
 						"id": "e17db01e-187b-11e2-8705-00144feabdc0",
-						"apiUrl":
-							"http://api.ft.com/content/items/v1/e17db01e-187b-11e2-8705-00144feabdc0",
-						"title": { "title": "Dalli denies wrongdoing over EU tobacco" },
+						"apiUrl": "https://api.ft.com/content/items/v1/e17db01e-187b-11e2-8705-00144feabdc0",
+						"title": {
+							"title": "Dalli denies wrongdoing over EU tobacco"
+						},
 						"lifecycle": {
 							"initialPublishDateTime": "2012-10-17T22:39:04Z",
 							"lastPublishDateTime": "2012-10-17T22:39:04Z"
 						},
 						"location": {
-							"uri":
-								"http://www.ft.com/cms/s/0/e17db01e-187b-11e2-8705-00144feabdc0.html"
+							"uri": "http://www.ft.com/cms/s/0/e17db01e-187b-11e2-8705-00144feabdc0.html"
 						}
 					},
 					{
 						"aspectSet": "article",
 						"modelVersion": "1",
 						"id": "1d13bb8a-17b1-11e2-9530-00144feabdc0",
-						"apiUrl":
-							"http://api.ft.com/content/items/v1/1d13bb8a-17b1-11e2-9530-00144feabdc0",
+						"apiUrl": "https://api.ft.com/content/items/v1/1d13bb8a-17b1-11e2-9530-00144feabdc0",
 						"title": { "title": "EU health commissioner quits" },
 						"lifecycle": {
 							"initialPublishDateTime": "2012-10-16T17:53:10Z",
 							"lastPublishDateTime": "2012-10-16T17:53:10Z"
 						},
 						"location": {
-							"uri":
-								"http://www.ft.com/cms/s/0/1d13bb8a-17b1-11e2-9530-00144feabdc0.html"
+							"uri": "http://www.ft.com/cms/s/0/1d13bb8a-17b1-11e2-9530-00144feabdc0.html"
 						}
 					},
 					{
 						"aspectSet": "article",
 						"modelVersion": "1",
 						"id": "b906cd28-07eb-11e2-a2d8-00144feabdc0",
-						"apiUrl":
-							"http://api.ft.com/content/items/v1/b906cd28-07eb-11e2-a2d8-00144feabdc0",
-						"title": { "title": "EU to step up scrutiny on medical devices" },
+						"apiUrl": "https://api.ft.com/content/items/v1/b906cd28-07eb-11e2-a2d8-00144feabdc0",
+						"title": {
+							"title": "EU to step up scrutiny on medical devices"
+						},
 						"lifecycle": {
 							"initialPublishDateTime": "2012-09-27T13:23:25Z",
 							"lastPublishDateTime": "2012-09-27T13:23:25Z"
 						},
 						"location": {
-							"uri":
-								"http://www.ft.com/cms/s/0/b906cd28-07eb-11e2-a2d8-00144feabdc0.html"
+							"uri": "http://www.ft.com/cms/s/0/b906cd28-07eb-11e2-a2d8-00144feabdc0.html"
 						}
 					},
 					{
 						"aspectSet": "article",
 						"modelVersion": "1",
 						"id": "fdf792d6-efe1-11e1-b1e5-00144feabdc0",
-						"apiUrl":
-							"http://api.ft.com/content/items/v1/fdf792d6-efe1-11e1-b1e5-00144feabdc0",
+						"apiUrl": "https://api.ft.com/content/items/v1/fdf792d6-efe1-11e1-b1e5-00144feabdc0",
 						"title": { "title": "Mark Knopfler: Privateering" },
 						"lifecycle": {
 							"initialPublishDateTime": "2012-08-31T19:19:22Z",
 							"lastPublishDateTime": "2012-08-31T19:19:22Z"
 						},
 						"location": {
-							"uri":
-								"http://www.ft.com/cms/s/0/fdf792d6-efe1-11e1-b1e5-00144feabdc0.html"
+							"uri": "http://www.ft.com/cms/s/0/fdf792d6-efe1-11e1-b1e5-00144feabdc0.html"
 						}
 					},
 					{
 						"aspectSet": "article",
 						"modelVersion": "1",
 						"id": "d73c95ae-b956-11e1-a470-00144feabdc0",
-						"apiUrl":
-							"http://api.ft.com/content/items/v1/d73c95ae-b956-11e1-a470-00144feabdc0",
-						"title": { "title": "Drug groups warn over new EU law" },
+						"apiUrl": "https://api.ft.com/content/items/v1/d73c95ae-b956-11e1-a470-00144feabdc0",
+						"title": {
+							"title": "Drug groups warn over new EU law"
+						},
 						"lifecycle": {
 							"initialPublishDateTime": "2012-06-18T17:07:52Z",
 							"lastPublishDateTime": "2012-06-18T17:07:52Z"
 						},
 						"location": {
-							"uri":
-								"http://www.ft.com/cms/s/0/d73c95ae-b956-11e1-a470-00144feabdc0.html"
+							"uri": "http://www.ft.com/cms/s/0/d73c95ae-b956-11e1-a470-00144feabdc0.html"
 						}
 					}
 				],
@@ -317,7 +309,10 @@
 							{ "name": "Mark Knopfler", "count": 1 },
 							{ "name": "Mark Romanek", "count": 1 },
 							{ "name": "Martin Scorsese", "count": 1 },
-							{ "name": "Mary-Kate and Ashley Olsen", "count": 1 },
+							{
+								"name": "Mary-Kate and Ashley Olsen",
+								"count": 1
+							},
 							{ "name": "Matt Damon", "count": 1 },
 							{ "name": "Michael J. Fox", "count": 1 },
 							{ "name": "Michelangelo Antonioni", "count": 1 },
@@ -393,13 +388,19 @@
 							{ "name": "Financial Times Ltd", "count": 2 },
 							{ "name": "Grand Ole Opry", "count": 2 },
 							{ "name": "LEO Pharma AS", "count": 2 },
-							{ "name": "London School of Economics", "count": 2 },
+							{
+								"name": "London School of Economics",
+								"count": 2
+							},
 							{ "name": "Novo Nordisk AS", "count": 2 },
 							{ "name": "Velvet Underground", "count": 2 },
 							{ "name": "Actavis", "count": 1 },
 							{ "name": "Airbus", "count": 1 },
 							{ "name": "Alfa Group Consortium", "count": 1 },
-							{ "name": "American Museum of Natural History", "count": 1 },
+							{
+								"name": "American Museum of Natural History",
+								"count": 1
+							},
 							{ "name": "AstraZeneca PLC", "count": 1 },
 							{ "name": "Atlantic Recording Corp", "count": 1 },
 							{ "name": "BBC", "count": 1 },
@@ -407,7 +408,10 @@
 							{ "name": "Dixie Chicks", "count": 1 },
 							{ "name": "European Investment Bank", "count": 1 },
 							{ "name": "Evotec AG", "count": 1 },
-							{ "name": "Food & Drug Administration USA", "count": 1 },
+							{
+								"name": "Food & Drug Administration USA",
+								"count": 1
+							},
 							{ "name": "Food Standards Agency UK", "count": 1 },
 							{ "name": "Givenchy SA", "count": 1 },
 							{ "name": "GlaxoSmithKline", "count": 1 },
@@ -420,8 +424,14 @@
 							{ "name": "JPMorgan Chase", "count": 1 },
 							{ "name": "Jil Sander AG", "count": 1 },
 							{ "name": "Labour Party UK", "count": 1 },
-							{ "name": "Libyan Investment Authority", "count": 1 },
-							{ "name": "London Symphony Orchestra Ltd", "count": 1 },
+							{
+								"name": "Libyan Investment Authority",
+								"count": 1
+							},
+							{
+								"name": "London Symphony Orchestra Ltd",
+								"count": 1
+							},
 							{ "name": "Merck KGaA", "count": 1 },
 							{ "name": "Modemuseum", "count": 1 },
 							{ "name": "Monsanto Co", "count": 1 },
@@ -432,7 +442,10 @@
 							{ "name": "Persian Gold PLC", "count": 1 },
 							{ "name": "Pfizer Inc", "count": 1 },
 							{ "name": "Pharmacreams", "count": 1 },
-							{ "name": "Philip Morris International Inc", "count": 1 },
+							{
+								"name": "Philip Morris International Inc",
+								"count": 1
+							},
 							{ "name": "Pulitzer Inc.", "count": 1 },
 							{ "name": "Rolling Stones", "count": 1 },
 							{ "name": "ST Dupont", "count": 1 },
@@ -440,19 +453,31 @@
 							{ "name": "Selfridges & Co Ltd", "count": 1 },
 							{ "name": "Socialist Party", "count": 1 },
 							{ "name": "Sonic Youth", "count": 1 },
-							{ "name": "Southern Baptist Convention", "count": 1 },
+							{
+								"name": "Southern Baptist Convention",
+								"count": 1
+							},
 							{ "name": "Sun Records", "count": 1 },
 							{ "name": "Sun Studios", "count": 1 },
-							{ "name": "Swiss International Air Lines Ltd", "count": 1 },
+							{
+								"name": "Swiss International Air Lines Ltd",
+								"count": 1
+							},
 							{ "name": "Swissair AG", "count": 1 },
 							{ "name": "Syngenta AG", "count": 1 },
 							{ "name": "The King", "count": 1 },
 							{ "name": "Time Inc", "count": 1 },
-							{ "name": "Twentieth Century Fox Film Corp", "count": 1 },
+							{
+								"name": "Twentieth Century Fox Film Corp",
+								"count": 1
+							},
 							{ "name": "UBS AG", "count": 1 },
 							{ "name": "UN Security Council", "count": 1 },
 							{ "name": "Walt Disney Co", "count": 1 },
-							{ "name": "Warner Bros Entertainment Inc", "count": 1 },
+							{
+								"name": "Warner Bros Entertainment Inc",
+								"count": 1
+							},
 							{ "name": "Welch's", "count": 1 },
 							{ "name": "World Health Organisation", "count": 1 },
 							{ "name": "Yves St Laurent Groupe", "count": 1 }
@@ -466,7 +491,10 @@
 							{ "name": "Austerity Europe", "count": 2 },
 							{ "name": "EU business regulation", "count": 2 },
 							{ "name": "Global terror", "count": 2 },
-							{ "name": "Middle Eastern Politics & Society", "count": 2 },
+							{
+								"name": "Middle Eastern Politics & Society",
+								"count": 2
+							},
 							{ "name": "Phone hacking", "count": 2 },
 							{ "name": "UK schools", "count": 2 },
 							{ "name": "Climate change", "count": 1 },
