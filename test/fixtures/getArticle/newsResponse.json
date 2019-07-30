@@ -7,9 +7,7 @@
 	"firstPublishedDate": "2018-03-01T06:30:24.000Z",
 	"publishedDate": "2018-03-01T06:30:24.000Z",
 	"requestUrl": "https://api.ft.com/enrichedcontent/70fc3c0e-1cb5-11e8-956a-43db76e69936",
-	"brands": [
-		"https://api.ft.com/things/dbb0bdae-1f0c-11e4-b0cb-b2227cce2b54"
-	],
+	"brands": ["https://api.ft.com/things/dbb0bdae-1f0c-11e4-b0cb-b2227cce2b54"],
 	"mainImage": {
 		"description": "Carlos Tavares, Chairman of the Managing Board of French carmaker PSA Group, attends a news conference in Paris, France, March 6, 2017. PSA Group has agreed to buy Opel from General Motors in a deal valuing the business at 2.2 billion euros ($2.3 billion) creating a new regional car giant. REUTERS/Christian Hartmann",
 		"firstPublishedDate": "2018-03-01T17:38:00.000Z",
