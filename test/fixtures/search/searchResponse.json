@@ -30,7 +30,7 @@
 						"modelVersion": "1",
 						"id": "c6b0ec93-f656-3681-8d2c-94def6f1f259",
 						"apiUrl":
-							"http://api.ft.com/content/items/v1/c6b0ec93-f656-3681-8d2c-94def6f1f259",
+							"https://api.ft.com/content/items/v1/c6b0ec93-f656-3681-8d2c-94def6f1f259",
 						"title": { "title": "Brussels briefing: wayward commissioners" },
 						"lifecycle": {
 							"initialPublishDateTime": "2016-11-01T08:35:55Z",
@@ -46,7 +46,7 @@
 						"modelVersion": "1",
 						"id": "dd2bfb4a-67cd-11e3-a905-00144feabdc0",
 						"apiUrl":
-							"http://api.ft.com/content/items/v1/dd2bfb4a-67cd-11e3-a905-00144feabdc0",
+							"https://api.ft.com/content/items/v1/dd2bfb4a-67cd-11e3-a905-00144feabdc0",
 						"title": {
 							"title": "EU reaches breakthrough deal on tighter tobacco rules"
 						},
@@ -64,7 +64,7 @@
 						"modelVersion": "1",
 						"id": "342b83dc-3fd7-34db-82bc-a9bf69c21113",
 						"apiUrl":
-							"http://api.ft.com/content/items/v1/342b83dc-3fd7-34db-82bc-a9bf69c21113",
+							"https://api.ft.com/content/items/v1/342b83dc-3fd7-34db-82bc-a9bf69c21113",
 						"title": {
 							"title": "Dalli and the bribery scandal that won't go away"
 						},
@@ -82,7 +82,7 @@
 						"modelVersion": "1",
 						"id": "1724fc26-49fb-11e2-8002-00144feab49a",
 						"apiUrl":
-							"http://api.ft.com/content/items/v1/1724fc26-49fb-11e2-8002-00144feab49a",
+							"https://api.ft.com/content/items/v1/1724fc26-49fb-11e2-8002-00144feab49a",
 						"title": { "title": "EU plans to increase cigarette warnings" },
 						"lifecycle": {
 							"initialPublishDateTime": "2012-12-19T19:39:28Z",
@@ -98,7 +98,7 @@
 						"modelVersion": "1",
 						"id": "14f24eb6-1df7-11e2-901e-00144feabdc0",
 						"apiUrl":
-							"http://api.ft.com/content/items/v1/14f24eb6-1df7-11e2-901e-00144feabdc0",
+							"https://api.ft.com/content/items/v1/14f24eb6-1df7-11e2-901e-00144feabdc0",
 						"title": { "title": "Dalli to sue over bribery scandal" },
 						"lifecycle": {
 							"initialPublishDateTime": "2012-10-24T21:34:33Z",
@@ -114,7 +114,7 @@
 						"modelVersion": "1",
 						"id": "e17db01e-187b-11e2-8705-00144feabdc0",
 						"apiUrl":
-							"http://api.ft.com/content/items/v1/e17db01e-187b-11e2-8705-00144feabdc0",
+							"https://api.ft.com/content/items/v1/e17db01e-187b-11e2-8705-00144feabdc0",
 						"title": { "title": "Dalli denies wrongdoing over EU tobacco" },
 						"lifecycle": {
 							"initialPublishDateTime": "2012-10-17T22:39:04Z",
@@ -130,7 +130,7 @@
 						"modelVersion": "1",
 						"id": "1d13bb8a-17b1-11e2-9530-00144feabdc0",
 						"apiUrl":
-							"http://api.ft.com/content/items/v1/1d13bb8a-17b1-11e2-9530-00144feabdc0",
+							"https://api.ft.com/content/items/v1/1d13bb8a-17b1-11e2-9530-00144feabdc0",
 						"title": { "title": "EU health commissioner quits" },
 						"lifecycle": {
 							"initialPublishDateTime": "2012-10-16T17:53:10Z",
@@ -146,7 +146,7 @@
 						"modelVersion": "1",
 						"id": "b906cd28-07eb-11e2-a2d8-00144feabdc0",
 						"apiUrl":
-							"http://api.ft.com/content/items/v1/b906cd28-07eb-11e2-a2d8-00144feabdc0",
+							"https://api.ft.com/content/items/v1/b906cd28-07eb-11e2-a2d8-00144feabdc0",
 						"title": { "title": "EU to step up scrutiny on medical devices" },
 						"lifecycle": {
 							"initialPublishDateTime": "2012-09-27T13:23:25Z",
@@ -162,7 +162,7 @@
 						"modelVersion": "1",
 						"id": "fdf792d6-efe1-11e1-b1e5-00144feabdc0",
 						"apiUrl":
-							"http://api.ft.com/content/items/v1/fdf792d6-efe1-11e1-b1e5-00144feabdc0",
+							"https://api.ft.com/content/items/v1/fdf792d6-efe1-11e1-b1e5-00144feabdc0",
 						"title": { "title": "Mark Knopfler: Privateering" },
 						"lifecycle": {
 							"initialPublishDateTime": "2012-08-31T19:19:22Z",
@@ -178,7 +178,7 @@
 						"modelVersion": "1",
 						"id": "d73c95ae-b956-11e1-a470-00144feabdc0",
 						"apiUrl":
-							"http://api.ft.com/content/items/v1/d73c95ae-b956-11e1-a470-00144feabdc0",
+							"https://api.ft.com/content/items/v1/d73c95ae-b956-11e1-a470-00144feabdc0",
 						"title": { "title": "Drug groups warn over new EU law" },
 						"lifecycle": {
 							"initialPublishDateTime": "2012-06-18T17:07:52Z",

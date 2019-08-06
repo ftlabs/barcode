@@ -16,13 +16,13 @@ function setUpSearchMock(
 	response = 200,
 	responseBody = searchFixture
 ) {
-	nock('http://api.ft.com')
+	nock('https://api.ft.com')
 		.post(`/content/search/v1?apiKey=${CAPI_KEY}`, expectedBody)
 		.reply(response, responseBody);
 }
 
 function setUpGetArticleMock(response = 200, responseBody = newsFixture) {
-	nock('http://api.ft.com')
+	nock('https://api.ft.com')
 		.get(`/enrichedcontent/${newsId}?apiKey=${CAPI_KEY}`)
 		.reply(response, responseBody);
 }
